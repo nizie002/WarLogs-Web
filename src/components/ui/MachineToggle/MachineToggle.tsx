@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, useId } from 'react';
 
 export interface MachineToggleProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string;
@@ -14,7 +14,8 @@ export function MachineToggle({
   onChange,
   ...props
 }: MachineToggleProps) {
-  const toggleId = id || `toggle-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const toggleId = id || `toggle-${generatedId}`;
 
   return (
     <div className="toggle-item">
@@ -32,7 +33,11 @@ export function MachineToggle({
           onChange={onChange}
           {...props}
         />
-        <span className="machine-toggle-knob" />
+        <div className="machine-toggle-track">
+          <span className="machine-toggle-text-on">ON</span>
+          <span className="machine-toggle-text-off">OFF</span>
+          <div className="machine-toggle-knob" />
+        </div>
       </label>
     </div>
   );

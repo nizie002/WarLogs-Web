@@ -1,7 +1,7 @@
 import { HTMLAttributes } from 'react';
 
 export interface StatusLightProps extends HTMLAttributes<HTMLSpanElement> {
-  status: 'online' | 'critical' | 'offline';
+  status: 'online' | 'warning' | 'critical' | 'offline';
 }
 
 export function StatusLight({

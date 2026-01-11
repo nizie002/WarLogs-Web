@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, ReactNode } from 'react';
+import { InputHTMLAttributes, ReactNode, useId } from 'react';
 
 export interface HexCheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: ReactNode;
@@ -14,24 +14,32 @@ export function HexCheckbox({
   onChange,
   ...props
 }: HexCheckboxProps) {
-  const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const checkboxId = id || `hex-${generatedId}`;
+  const inputType = group ? 'radio' : 'checkbox';
 
   return (
-    <div className="hex-checkbox-wrapper">
+    <label className="hex-checkbox-wrapper" htmlFor={checkboxId}>
       <input
-        type="checkbox"
+        type={inputType}
         id={checkboxId}
-        className={`hex-checkbox ${checked ? 'checked' : ''} ${className}`.trim()}
+        className={`hex-checkbox-input ${className}`.trim()}
         checked={checked}
         onChange={onChange}
-        {...(group ? { name: group } : {})}
+        name={group} // Name is required for radio groups to work native
         {...props}
       />
+
+      {/* Visual Representation */}
+      <div className="hex-checkbox-visual">
+        <div className="hex-checkbox-shape" />
+      </div>
+
       {label && (
-        <label htmlFor={checkboxId} className="hex-checkbox-label">
+        <span className="hex-checkbox-label">
           {label}
-        </label>
+        </span>
       )}
-    </div>
+    </label>
   );
 }

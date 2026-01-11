@@ -1,20 +1,20 @@
 .page {
-  --background: #fafafa;
-  --foreground: #fff;
+  --background: transparent;
+  --foreground: transparent;
 
-  --text-primary: #000;
-  --text-secondary: #666;
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-muted);
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
+  --button-primary-hover: rgba(57, 255, 20, 0.2);
+  --button-secondary-hover: rgba(255, 255, 255, 0.05);
+  --button-secondary-border: var(--color-border-dim);
 
   display: flex;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  font-family: var(--font-interface);
+  background-color: transparent;
 }
 
 .main {
@@ -25,7 +25,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  background-color: var(--foreground);
+  background-color: transparent;
   padding: 120px 60px;
 }
 
@@ -125,17 +125,5 @@ a.secondary {
 @media (prefers-color-scheme: dark) {
   .logo {
     filter: invert();
-  }
-
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
   }
 }

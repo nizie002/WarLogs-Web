@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    WARLOGS DESIGN CODEX - DEFINITIVE IMPLEMENTATION (v6)
    The Unified Component Architecture
    ============================================================
@@ -77,15 +77,45 @@ html,
 body {
     height: 100%;
     overflow: hidden;
+    background-color: var(--color-bg-void);
 }
 
 body {
     font-family: var(--font-interface);
     font-weight: 500;
-    background-color: var(--color-bg-void);
     color: var(--color-text-primary);
     line-height: 1.6;
 }
+
+/* ============================================================
+   2.1 CUSTOM SCROLLBAR (Codex Section 2.1)
+   ============================================================ */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-void);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border-dim);
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+/* Firefox Support */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-dim) var(--color-bg-void);
+}
+
 
 
 /* ============================================================
@@ -104,7 +134,34 @@ body {
             rgba(57, 255, 20, 0.02) 4px);
     pointer-events: none;
     z-index: 0;
-    animation: scanline 15s linear infinite;
+    animation: flicker 0.15s infinite;
+}
+
+/* Sweep line - the visible moving element with glitch stutter */
+.scanline-effect::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom,
+            transparent 0%,
+            rgba(57, 255, 20, 0.05) 50%,
+            transparent 100%);
+    animation: sweep-glitch 6s steps(120, end) infinite;
+}
+
+/* Horizontal glitch tear line */
+.scanline-effect::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(57, 255, 20, 0.15);
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.25);
+    animation: tear 4s linear infinite;
+    opacity: 0;
 }
 
 /* Base application layer to sit above background effects */
@@ -115,16 +172,609 @@ body {
     display: flex;
 }
 
-@keyframes scanline {
-    0% {
-        background-position: 0 0;
+/* Subtle flicker - slight opacity variation */
+@keyframes flicker {
+
+    0%,
+    100% {
+        opacity: 1;
     }
 
-    100% {
-        background-position: 0 100%;
+    50% {
+        opacity: 0.98;
+    }
+
+    25%,
+    75% {
+        opacity: 0.99;
+    }
+
+    10% {
+        opacity: 0.97;
     }
 }
 
+/* Glitchy sweep with stutter effect */
+@keyframes sweep-glitch {
+    0% {
+        top: -100px;
+        opacity: 1;
+    }
+
+    15% {
+        top: 15%;
+        opacity: 0.8;
+    }
+
+    15.5% {
+        top: 14%;
+        opacity: 1;
+    }
+
+    /* Jump back - glitch */
+    30% {
+        top: 30%;
+    }
+
+    45% {
+        top: 45%;
+        opacity: 0.6;
+    }
+
+    45.2% {
+        top: 46%;
+        opacity: 1;
+    }
+
+    /* Jump forward - glitch */
+    60% {
+        top: 60%;
+    }
+
+    75% {
+        top: 75%;
+        opacity: 0.7;
+    }
+
+    90% {
+        top: 90%;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 1;
+    }
+}
+
+/* Tear line that appears randomly */
+@keyframes tear {
+
+    0%,
+    89%,
+    100% {
+        opacity: 0;
+        top: 0;
+    }
+
+    90% {
+        opacity: 1;
+        top: 30%;
+        transform: translateX(-5px);
+    }
+
+    91% {
+        opacity: 0;
+    }
+
+    94% {
+        opacity: 0.8;
+        top: 70%;
+        transform: translateX(3px);
+    }
+
+    95% {
+        opacity: 0;
+    }
+}
+
+
+/* ============================================================
+   CARD SYSTEM (Unified Component Architecture)
+   ============================================================ */
+
+/* Card Grid Layout */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+/* Base Card */
+.card {
+    padding: var(--space-lg);
+    transition: all var(--duration-snap) var(--easing-mechanical);
+}
+
+/* ===== Visual Tiers ===== */
+
+/* Tier 1: Subtle - No border, for grouping */
+.card--subtle {
+    border: none;
+}
+
+/* Tier 2: Standard - Standard border, primary content */
+.card--standard {
+    border: 1px solid var(--color-border-dim);
+}
+
+/* Tier 3: Accent - Colored green border for status/priority */
+.card--accent {
+    border: 1px solid var(--color-primary-action);
+    border-left-width: 3px;
+}
+
+/* ===== Surface Materials ===== */
+
+/* Solid - Opaque background, blocks layers below */
+.card--solid {
+    background-color: var(--color-bg-surface);
+}
+
+/* Glass - Semi-transparent with blur, HUD feel */
+.card--glass {
+    background-color: rgba(26, 28, 30, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* ===== Card Sub-components ===== */
+
+.card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.card__header--centered {
+    justify-content: center;
+    text-align: center;
+}
+
+.card__title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.card__subtitle {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin: var(--space-xs) 0 0 0;
+}
+
+.card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+/* Interactive Card State */
+.card--interactive {
+    cursor: pointer;
+}
+
+.card--interactive:hover {
+    box-shadow: var(--shadow-glow-primary);
+    border-color: var(--color-primary-action);
+}
+
+/* ============================================================
+   CODEX DOCUMENTATION LAYOUT
+   ============================================================ */
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-lg) 0;
+    border-bottom: 1px solid var(--color-border-dim);
+    padding-bottom: var(--space-sm);
+}
+
+.codex-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .codex-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+    }
+}
+
+/* Codex Matrix Layout (Card Matrix) */
+.codex-matrix {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr;
+    gap: var(--space-lg);
+    align-items: start;
+    margin-top: var(--space-xl);
+}
+
+.codex-matrix__header {
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.codex-matrix__header--active {
+    color: var(--color-primary-action);
+}
+
+.codex-matrix__tier {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .codex-matrix {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+
+    .codex-matrix__header {
+        display: none;
+    }
+
+    .codex-matrix__tier {
+        text-align: left;
+        margin-top: var(--space-lg);
+        padding: var(--space-xs) 0;
+        border-bottom: 1px solid var(--color-border-dim);
+    }
+}
+
+
+.codex-description {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    border-left: 2px solid var(--color-border-dim);
+    padding-left: var(--space-lg);
+}
+
+.codex-description h4 {
+    color: var(--color-text-primary);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    margin-bottom: var(--space-xs);
+    margin-top: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.codex-description h4:first-child {
+    margin-top: 0;
+}
+
+.codex-description code {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 4px;
+    border: 1px solid var(--color-border-dim);
+    color: var(--color-primary-action);
+    font-size: 0.85em;
+}
+
+
+/* ============================================================
+   STATUS INDICATORS
+   ============================================================ */
+
+/* Status Light - Pulsing dot indicator */
+.status-light {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.status-light.online {
+    background-color: var(--color-primary-action);
+    box-shadow: 0 0 8px var(--color-primary-action);
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.status-light.warning {
+    background-color: #fbbf24;
+    box-shadow: 0 0 8px #fbbf24;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.status-light.critical {
+    background-color: var(--color-primary-alert);
+    box-shadow: 0 0 8px var(--color-primary-alert);
+    animation: pulse-glow 1s ease-in-out infinite;
+}
+
+.status-light.offline {
+    background-color: var(--color-text-muted);
+    box-shadow: none;
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Status Badge - Text pill for metadata/state */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    border: 1px solid var(--color-border-dim);
+    font-family: var(--font-interface);
+    font-weight: 700;
+    font-size: 0.75rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    background: rgba(0, 0, 0, 0.2);
+    cursor: default;
+    transition: all var(--duration-snap) ease;
+}
+
+.status-badge.active {
+    border-color: var(--color-primary-action);
+    color: var(--color-primary-action);
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.2);
+    /* background: rgba(57, 255, 20, 0.05);  Optional tint */
+}
+
+.status-badge.alert {
+    border-color: var(--color-primary-alert);
+    color: var(--color-primary-alert);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+
+/* ============================================================
+   DATA SLATE (MODAL OVERLAY) (Codex Section 5)
+   Focused Interaction Layer
+   ============================================================ */
+
+/* Backdrop: Dimming and Blur */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.modal-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Container: The Slate itself */
+.data-slate {
+    background-color: var(--color-bg-void);
+    /* Or slightly lighter 'surface' color? */
+    border: 1px solid var(--color-border-dim);
+    width: 100%;
+    max-width: 400px;
+    /* Compact focused task */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    transform: scale(0.95);
+    transition: transform 0.2s cubic-bezier(0, 1, 0, 1);
+}
+
+.modal-backdrop.active .data-slate {
+    transform: scale(1);
+}
+
+/* Header */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-border-dim);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.modal-title {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 1.1rem;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+/* Close Action */
+/* Close Action */
+.modal-close {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--color-text-muted);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    padding: 0;
+}
+
+.modal-close:hover {
+    border-color: var(--color-primary-alert);
+    color: var(--color-primary-alert);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Content Area */
+.modal-content {
+    padding: var(--space-lg);
+}
+
+
+/* ============================================================
+   NAVIGATION ELEMENTS (Codex Section 6)
+   Sidebar Navigation
+   ============================================================ */
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+    /* Fixed width for demo */
+    border-right: 1px solid var(--color-border-dim);
+}
+
+.sidebar-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-family: var(--font-interface);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    overflow: hidden;
+    /* For marker slide-in */
+}
+
+/* Marker Line */
+.sidebar-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: var(--color-primary-action);
+    transform: translateX(-100%);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover State */
+.sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--color-text-primary);
+}
+
+.sidebar-item:hover::before {
+    transform: translateX(0);
+}
+
+/* Active State */
+.sidebar-item.active {
+    background-color: rgba(57, 255, 20, 0.05);
+    color: var(--color-primary-action);
+}
+
+.sidebar-item.active::before {
+    transform: translateX(0);
+}
+
+.sidebar-item svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar-item:hover svg,
+.sidebar-item.active svg {
+    opacity: 1;
+}
+
+
+/* ============================================================
+   VALUE & LABEL TYPOGRAPHY
+   ============================================================ */
+
+/* Value - Data display typography */
+.value {
+    font-family: var(--font-interface);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.value--sm {
+    font-size: 1.25rem;
+    /* Codex 3.0: 20px */
+}
+
+.value--md {
+    font-size: 1.5rem;
+}
+
+.value--lg {
+    font-size: 2.5rem;
+}
+
+.value--accent {
+    color: var(--color-primary-action);
+}
+
+.value--alert {
+    color: var(--color-primary-alert);
+}
+
+.value--muted {
+    color: var(--color-text-muted);
+}
+
+/* Label - Small uppercase descriptor */
+.label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    font-weight: 700;
+}
 
 
 /* ============================================================
@@ -337,41 +987,213 @@ textarea:focus-visible,
     box-shadow: var(--shadow-glow-alert);
 }
 
+/* Small Action Button Variant */
+.action-button.sm {
+    min-width: 80px;
+    height: 32px;
+    padding: 0 var(--space-md);
+    font-size: 0.75rem;
+}
+
+/* Active / Toggled State */
+.action-button.is-active {
+    background: rgba(57, 255, 20, 0.15);
+    border-color: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.action-button.secondary.is-active {
+    background: rgba(227, 218, 201, 0.1);
+    border-color: var(--color-text-primary);
+    box-shadow: 0 0 10px rgba(227, 218, 201, 0.2);
+}
+
+
 /* ============================================================
    4.1.2 COGITATOR INPUT (Codex Section 4.1.2)
-   BOX-STYLE with chamfered corners to match design vision
+   BOX-STYLE with absolute-positioned labels
    ============================================================ */
 
 .cogitator-input-wrapper {
     position: relative;
     width: 100%;
+    margin-top: var(--space-xl);
     margin-bottom: var(--space-lg);
+}
+
+.cogitator-label {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    background: #0d0d0d;
+    padding: 0 8px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    z-index: 10;
 }
 
 .cogitator-input {
     width: 100%;
     height: 48px;
     background-color: #0d0d0d;
-    /* Opaque dark background to block scanlines */
     border: 1px solid var(--color-border-dim);
     color: var(--color-text-primary);
     font-family: var(--font-interface);
     font-weight: 500;
     font-size: 1rem;
     padding: 0 var(--space-md);
-    transition: border-color var(--duration-snap) var(--easing-mechanical),
-        background var(--duration-snap) var(--easing-mechanical),
-        box-shadow var(--duration-snap) var(--easing-mechanical);
-    cursor: text;
-    /* Simple rectangular borders per design vision */
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    display: flex;
+    align-items: center;
+    position: relative;
 }
 
 .cogitator-input:focus {
     outline: none;
     border-color: var(--color-primary-action);
-    background-color: #111111;
-    /* Slightly lighter when active */
     box-shadow: var(--shadow-glow-primary);
+}
+
+/* Error State */
+.cogitator-input--error {
+    border-color: var(--color-primary-alert);
+}
+
+.cogitator-input--error:focus {
+    border-color: var(--color-primary-alert);
+    box-shadow: var(--shadow-glow-alert);
+}
+
+.cogitator-input--error+.cogitator-label {
+    color: var(--color-primary-alert);
+}
+
+.cogitator-helper {
+    font-size: 0.7rem;
+    color: var(--color-primary-alert);
+    text-transform: uppercase;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+    font-family: var(--font-interface);
+    font-weight: 700;
+}
+
+/* Select Styling */
+select.cogitator-input {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-md) center;
+    background-size: 16px;
+}
+
+select.cogitator-input:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2339FF14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+/* Style the drop-down options */
+.cogitator-input option {
+    background-color: #1a1c1e;
+    /* Specific dark tone for options */
+    color: var(--color-text-primary);
+    font-family: var(--font-interface);
+    font-size: 0.9rem;
+    padding: var(--space-md);
+}
+
+/* Ensure font inheritance for select */
+select.cogitator-input {
+    font-family: var(--font-interface);
+}
+
+/* Custom Cogitator Select (Advanced HUD version) */
+.cogitator-select {
+    position: relative;
+    width: 100%;
+}
+
+.cogitator-select__trigger {
+    width: 100%;
+    height: 48px;
+    background-color: #0d0d0d;
+    border: 1px solid var(--color-border-dim);
+    color: var(--color-text-primary);
+    font-family: var(--font-interface);
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0 var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    text-align: left;
+}
+
+.cogitator-select.is-open .cogitator-select__trigger,
+.cogitator-select__trigger:focus {
+    outline: none;
+    border-color: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.cogitator-select__chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-muted);
+    transition: transform var(--duration-snap) var(--easing-mechanical);
+}
+
+.cogitator-select.is-open .cogitator-select__chevron {
+    transform: rotate(180deg);
+    color: var(--color-primary-action);
+}
+
+.cogitator-select__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background-color: #0a0a0a;
+    border: 1px solid var(--color-border-dim);
+    box-shadow: var(--shadow-glow-primary);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 2px;
+}
+
+.cogitator-select__option {
+    padding: var(--space-md);
+    cursor: pointer;
+    font-family: var(--font-interface);
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    transition: all var(--duration-glitch) linear;
+    border: 1px solid transparent;
+}
+
+.cogitator-select__option:hover {
+    background-color: rgba(57, 255, 20, 0.1);
+    color: var(--color-primary-action);
+}
+
+.cogitator-select__option.is-selected {
+    background-color: rgba(57, 255, 20, 0.1);
+    color: var(--color-primary-action);
+    font-weight: 700;
+    border-left: 2px solid var(--color-primary-action);
+}
+
+/* Number arrows removal / styling */
+.cogitator-input::-webkit-inner-spin-button,
+.cogitator-input::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 30px;
 }
 
 .cogitator-input::placeholder {
@@ -696,6 +1518,121 @@ select.cogitator-input option {
 }
 
 /* Logo icon with intense glow - "Light from Darkness" (Codex 1.1) */
+
+/* ============================================================
+   MANIFEST TABLE (Codex Section 7)
+   High-Density Grid
+   ============================================================ */
+
+.manifest-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: var(--font-interface);
+}
+
+/* Headers */
+.manifest-table th {
+    text-align: left;
+    padding: 0 var(--space-md) var(--space-md) var(--space-md);
+    border-bottom: 1px solid var(--color-border-dim);
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Rows */
+.manifest-table tr {
+    position: relative;
+    transition: all 0.1s ease;
+}
+
+/* Interaction: Outline prevents layout shift */
+.manifest-table tbody tr:hover {
+    outline: 1px solid var(--color-primary-action);
+    background: rgba(57, 255, 20, 0.02);
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.1);
+    z-index: 10;
+    /* Bring to front */
+}
+
+/* Cells */
+.manifest-table td {
+    padding: var(--space-md);
+    vertical-align: top;
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Tabular Nums for Data Columns */
+.manifest-table td.numeric {
+    font-variant-numeric: tabular-nums;
+    font-family: var(--font-interface);
+}
+
+
+/* ============================================================
+   LOG ENTRIES (Codex Section 8)
+   Timeline Event Feed
+   ============================================================ */
+
+/* Base Layout - Works inside specific cards */
+.log-entry {
+    display: flex;
+    align-items: flex-start;
+    /* Top align for multiline content */
+    gap: var(--space-xl);
+    padding: var(--space-md) var(--space-lg);
+    /* Override default card padding if needed, or use as inner wrapper */
+}
+
+.log-timestamp {
+    width: 80px;
+    /* Fixed width for alignment */
+    flex-shrink: 0;
+    font-family: var(--font-interface);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    padding-top: 2px;
+    /* Optical alignment with title uppercase */
+}
+
+.log-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+}
+
+.log-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+}
+
+.log-description {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Alert Variant */
+.log-entry.alert .log-title {
+    color: var(--color-primary-alert);
+}
+
+.log-entry.alert .log-timestamp {
+    color: var(--color-text-muted);
+    /* Keep timestamp neutral or alert? Design shows neutral but maybe red? Sticking to design image which looks neutral/white-ish for time, red for title */
+}
+
 .sidebar-logo-icon {
     color: var(--color-primary-action);
     filter: drop-shadow(0 0 8px var(--color-primary-action)) drop-shadow(0 0 16px var(--color-primary-action));
@@ -893,6 +1830,137 @@ select.cogitator-input option {
 }
 
 /* ============================================================
+   VOX TOAST SYSTEM (Codex Section 9)
+   Feedback & Vox Transmissions
+   ============================================================ */
+
+.vox-toast-container {
+    position: fixed;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    pointer-events: none;
+    /* Let clicks pass through container */
+}
+
+.vox-toast {
+    width: 340px;
+    min-height: 72px;
+    background: #0d0d0d;
+    border: 1px solid var(--color-border-dim);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-md) var(--space-md) calc(var(--space-md) + 6px);
+    /* Extra padding for strip */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    animation: slide-in-right 0.3s cubic-bezier(0, 1, 0, 1) forwards;
+    /* Aggressive mechanical slide */
+    pointer-events: all;
+    /* Re-enable clicks on toast */
+    position: relative;
+    overflow: hidden;
+    /* clean edges */
+}
+
+/* Neon Strip */
+.vox-toast::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--color-text-muted);
+    transition: background 0.3s ease;
+}
+
+/* Variants */
+.vox-toast--success::before {
+    background: var(--color-primary-action);
+    box-shadow: 2px 0 10px var(--color-primary-action);
+    /* Inner glow effect */
+}
+
+.vox-toast--error::before {
+    background: var(--color-primary-alert);
+}
+
+.vox-toast--info::before {
+    background: var(--color-text-muted);
+}
+
+/* Icon */
+.vox-toast-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.vox-toast--success .vox-toast-icon {
+    color: var(--color-primary-action);
+}
+
+.vox-toast--error .vox-toast-icon {
+    color: var(--color-primary-alert);
+}
+
+/* Content */
+.vox-toast-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vox-toast-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+}
+
+.vox-toast-message {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+}
+
+/* Animations */
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out-right {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.vox-toast.exiting {
+    animation: fade-out-right 0.3s ease-in forwards;
+}
+
+/* ============================================================
    4.3.2 VOX TOAST (Codex Section 4.3.2)
    ============================================================ */
 
@@ -1024,124 +2092,7 @@ select.cogitator-input option {
     }
 }
 
-/* ============================================================
-   4.7 CUSTOM SELECT (Script-Enhanced Dropdown)
-   ============================================================ */
 
-/* Hide the original select when custom one is active */
-select.cogitator-input.custom-select-initialized {
-    display: none;
-}
-
-.custom-select-wrapper {
-    position: relative;
-    user-select: none;
-    width: 100%;
-}
-
-.custom-select {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-.custom-select-trigger {
-    width: 100%;
-    height: 48px;
-    background-color: #0d0d0d;
-    border: 1px solid var(--color-border-dim);
-    color: var(--color-text-primary);
-    font-family: var(--font-interface);
-    font-weight: 500;
-    font-size: 1rem;
-    padding: 0 var(--space-md);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: all var(--duration-snap) var(--easing-mechanical);
-}
-
-.custom-select-trigger::after {
-    content: '';
-    width: 16px;
-    height: 16px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    transition: transform var(--duration-snap) var(--easing-mechanical);
-}
-
-.custom-select.open .custom-select-trigger {
-    border-color: var(--color-primary-action);
-    background-color: #111111;
-    box-shadow: var(--shadow-glow-primary);
-}
-
-.custom-select.open .custom-select-trigger::after {
-    transform: rotate(180deg);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2339ff14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-}
-
-.custom-options {
-    position: absolute;
-    display: block;
-    top: 100%;
-    left: 0;
-    right: 0;
-    border: 1px solid var(--color-primary-action);
-    border-top: 0;
-    background: #0d0d0d;
-    transition: all var(--duration-snap) var(--easing-mechanical);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    z-index: 100;
-    margin-top: 2px;
-    max-height: 200px;
-    overflow-y: auto;
-    box-shadow: var(--shadow-glow-primary);
-}
-
-.custom-select.open .custom-options {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: all;
-}
-
-.custom-option {
-    position: relative;
-    display: block;
-    padding: var(--space-sm) var(--space-md);
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    transition: all 0.1s var(--easing-mechanical);
-    border-bottom: 1px solid #1a1a1a;
-}
-
-.custom-option:last-child {
-    border-bottom: none;
-}
-
-.custom-option:hover,
-.custom-option.selected {
-    color: #000;
-    background-color: var(--color-primary-action);
-}
-
-.custom-option.selected::after {
-    content: 'SELECTED';
-    position: absolute;
-    right: 10px;
-    font-size: 0.6em;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.5;
-}
 
 .data-slate {
     width: 90vw;
@@ -1565,9 +2516,10 @@ select.cogitator-input.custom-select-initialized {
 [data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 125%;
+    bottom: 100%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-8px);
+    /* Slight gap */
     background: var(--color-bg-surface);
     border: 1px solid var(--color-border-dim);
     padding: var(--space-xs) var(--space-md);
@@ -1577,14 +2529,15 @@ select.cogitator-input.custom-select-initialized {
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--duration-snap) var(--easing-mechanical);
+    transition: opacity var(--duration-snap) var(--easing-mechanical), transform var(--duration-snap) var(--easing-mechanical);
     z-index: 1000;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    /* Simple rectangular borders */
 }
 
 [data-tooltip]:hover::after {
     opacity: 1;
+    transform: translateX(-50%) translateY(-12px);
+    /* Slight lift on hover */
 }
 
 /* ============================================================
@@ -1698,7 +2651,7 @@ select.cogitator-input.custom-select-initialized {
     height: 100vh;
     overflow-y: auto;
     padding: var(--space-2xl);
-    
+
     /* NEU: Damit die inneren Seiten wachsen kÃ¶nnen */
     display: flex;
     flex-direction: column;
@@ -1708,7 +2661,7 @@ select.cogitator-input.custom-select-initialized {
 .page {
     display: none;
     animation: page-fade-in var(--duration-modal) var(--easing-mechanical);
-    
+
     /* NEU: Stellt sicher, dass die Seite die volle Breite nutzt */
     width: 100%;
 }
@@ -1717,7 +2670,7 @@ select.cogitator-input.custom-select-initialized {
     /* Ã„NDERUNG: Von 'block' zu 'flex' Ã¤ndern, damit flex: 1 greift */
     display: flex;
     flex-direction: column;
-    
+
     /* NEU: FÃ¼llt den restlichen vertikalen Platz im .main-content auf */
     flex: 1;
 }
@@ -1793,10 +2746,12 @@ select.cogitator-input.custom-select-initialized {
     display: grid;
     grid-template-columns: 300px 1fr 280px;
     gap: var(--space-lg);
-    
+
     /* Ã„NDERUNG: Statt starrer calc() Berechnung nutzen wir flex: 1 */
-    flex: 1; /* FÃ¼llt automatisch den Platz bis unten */
-    min-height: 0; /* Wichtig fÃ¼r Grid in Flex-Containern zum Scrollen */
+    flex: 1;
+    /* FÃ¼llt automatisch den Platz bis unten */
+    min-height: 0;
+    /* Wichtig fÃ¼r Grid in Flex-Containern zum Scrollen */
 }
 
 /* Log Entries */
@@ -2004,15 +2959,19 @@ select.cogitator-input.custom-select-initialized {
 @media (max-width: 768px) {
 
     /* --- SIDEBAR LOGIK FÃœR MOBILE --- */
-    
+
     /* Sidebar ist jetzt standardmÃ¤ÃŸig "versteckt" (auÃŸerhalb des Bildschirms), aber nicht "weg" */
     .cogitator-sidebar {
-        display: flex; /* Wieder anzeigen */
-        transform: translateX(-100%); /* Nach links aus dem Bild schieben */
+        display: flex;
+        /* Wieder anzeigen */
+        transform: translateX(-100%);
+        /* Nach links aus dem Bild schieben */
         transition: transform var(--duration-modal) var(--easing-aggressive);
-        box-shadow: 0 0 50px rgba(0,0,0,0.8);
-        width: 260px; /* Etwas breiter fÃ¼r Touch */
-        z-index: 2000; /* Ãœber allem anderen */
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        width: 260px;
+        /* Etwas breiter fÃ¼r Touch */
+        z-index: 2000;
+        /* Ãœber allem anderen */
     }
 
     /* Wenn die Klasse "active" per JS gesetzt wird, schiebt sie sich rein */
@@ -2025,15 +2984,17 @@ select.cogitator-input.custom-select-initialized {
         position: fixed;
         top: var(--space-md);
         right: var(--space-md);
-        z-index: 1500; /* Ãœber dem Content, aber unter der offenen Sidebar */
+        z-index: 1500;
+        /* Ãœber dem Content, aber unter der offenen Sidebar */
         width: 44px;
         height: 44px;
         background: var(--color-bg-void);
         padding: 0;
-        display: flex; /* Zeigt den Button nur auf Mobile */
+        display: flex;
+        /* Zeigt den Button nur auf Mobile */
         justify-content: center;
         align-items: center;
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     }
 
     /* .tactical-bar DELETED */
@@ -2042,7 +3003,8 @@ select.cogitator-input.custom-select-initialized {
         margin-left: 0;
         padding: var(--space-lg);
         padding-bottom: var(--space-lg);
-        padding-top: 60px; /* Platz fÃ¼r den Button oben schaffen */
+        padding-top: 60px;
+        /* Platz fÃ¼r den Button oben schaffen */
     }
 
     /* Stack grids */
@@ -2162,6 +3124,12 @@ select.cogitator-input.custom-select-initialized {
     opacity: 0.3;
     transition: all 0.2s ease;
     box-shadow: none;
+}
+
+.progress-segment.active {
+    background: var(--color-primary-action);
+    opacity: 1;
+    box-shadow: 0 0 8px var(--color-primary-action);
 }
 
 .loading-text {
@@ -2289,9 +3257,12 @@ select.cogitator-input.custom-select-initialized {
 }
 
 @keyframes phase-pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: var(--shadow-glow-primary);
     }
+
     50% {
         box-shadow: var(--shadow-glow-primary-intense);
     }
@@ -2318,7 +3289,7 @@ select.cogitator-input.custom-select-initialized {
     flex-shrink: 0;
 }
 
-.phase-step.completed + .phase-connector {
+.phase-step.completed+.phase-connector {
     background: var(--color-primary-action);
     box-shadow: var(--shadow-glow-primary);
 }
@@ -2338,6 +3309,7 @@ select.cogitator-input.custom-select-initialized {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -2376,30 +3348,515 @@ select.cogitator-input.custom-select-initialized {
 }
 
 @keyframes battle-pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: var(--shadow-glow-primary);
     }
+
     50% {
         box-shadow: var(--shadow-glow-primary-intense), 0 0 40px rgba(57, 255, 20, 0.3);
     }
 }
 
+/* ============================================================
+   5. ACTION BUTTONS (Codex Section 3.1)
+   ============================================================ */
+
+.action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-lg);
+    background: transparent;
+    border: 1px solid var(--color-primary-action);
+    color: var(--color-primary-action);
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.action-button:hover:not(:disabled) {
+    background: rgba(57, 255, 20, 0.1);
+    box-shadow: var(--shadow-glow-primary);
+    transform: translateY(-1px);
+}
+
+.action-button:active:not(:disabled) {
+    background: var(--color-primary-action);
+    color: var(--color-bg-void);
+    animation: lightning-flash 0.3s var(--easing-mechanical);
+    transform: translateY(1px);
+}
+
+.action-button:disabled {
+    border-color: var(--color-border-dim);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Secondary Variant */
+.action-button.secondary {
+    border-color: var(--color-border-dim);
+    color: var(--color-text-primary);
+}
+
+.action-button.secondary:hover:not(:disabled) {
+    background: rgba(227, 218, 201, 0.05);
+    border-color: var(--color-text-primary);
+    box-shadow: 0 0 10px rgba(227, 218, 201, 0.2);
+}
+
+.action-button.secondary:active:not(:disabled) {
+    background: var(--color-text-primary);
+    color: var(--color-bg-void);
+}
+
+/* Danger Variant */
+.action-button.danger {
+    border-color: var(--color-primary-alert);
+    color: var(--color-primary-alert);
+}
+
+.action-button.danger:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.1);
+    box-shadow: var(--shadow-glow-alert);
+}
+
+.action-button.danger:active:not(:disabled) {
+    background: var(--color-primary-alert);
+    color: var(--color-bg-void);
+}
+
+@keyframes lightning-flash {
+    0% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(3) contrast(2);
+    }
+
+    100% {
+        filter: brightness(1);
+    }
+}
+
 /* Responsive adjustments */
+
 @media (max-width: 768px) {
     .assembly-phase-indicator {
         justify-content: flex-start;
         padding: var(--space-md);
     }
-    
+
     .phase-step {
         min-width: 80px;
     }
-    
+
     .phase-label {
         font-size: 0.6rem;
     }
-    
+
     .phase-connector {
         width: 20px;
     }
+}
+
+/* ============================================================
+   4. MOTION DESIGN (Codex Section 2.3)
+   ============================================================ */
+
+/* Glitch Effect (Chromatic Aberration) */
+.glitch {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch--active {
+    animation: glitch-main var(--duration-glitch) var(--easing-mechanical) forwards;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    pointer-events: none;
+    display: none;
+}
+
+.glitch--active::before {
+    display: block;
+    color: #ff00ff;
+    /* Magenta shift */
+    z-index: -1;
+    animation: glitch-anim-1 var(--duration-glitch) var(--easing-mechanical) infinite;
+}
+
+.glitch--active::after {
+    display: block;
+    color: #00ffff;
+    /* Cyan shift */
+    z-index: -2;
+    animation: glitch-anim-2 var(--duration-glitch) var(--easing-mechanical) infinite;
+}
+
+@keyframes glitch-main {
+    0% {
+        transform: none;
+        filter: brightness(1);
+    }
+
+    25% {
+        transform: skewX(-2deg);
+        filter: brightness(1.2);
+    }
+
+    50% {
+        transform: skewX(2deg);
+        filter: brightness(0.8);
+    }
+
+    75% {
+        transform: skewX(-1deg);
+        filter: brightness(1.1);
+    }
+
+    100% {
+        transform: none;
+        filter: brightness(1);
+    }
+}
+
+@keyframes glitch-anim-1 {
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(calc(var(--glitch-displacement) * -1), var(--glitch-displacement));
+    }
+
+    40% {
+        transform: translate(calc(var(--glitch-displacement) * -1), calc(var(--glitch-displacement) * -1));
+    }
+
+    60% {
+        transform: translate(var(--glitch-displacement), var(--glitch-displacement));
+    }
+
+    80% {
+        transform: translate(var(--glitch-displacement), calc(var(--glitch-displacement) * -1));
+    }
+
+    100% {
+        transform: translate(0);
+    }
+}
+
+@keyframes glitch-anim-2 {
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(var(--glitch-displacement), calc(var(--glitch-displacement) * -1));
+    }
+
+    40% {
+        transform: translate(var(--glitch-displacement), var(--glitch-displacement));
+    }
+
+    60% {
+        transform: translate(calc(var(--glitch-displacement) * -1), calc(var(--glitch-displacement) * -1));
+    }
+
+    80% {
+        transform: translate(calc(var(--glitch-displacement) * -1), var(--glitch-displacement));
+    }
+
+    100% {
+        transform: translate(0);
+    }
+}
+
+/* Page Transition Glitch */
+.page-glitch {
+    opacity: 1;
+    /* Default to visible if not active */
+}
+
+.page-glitch--active {
+    animation: page-entrance 180ms var(--easing-aggressive) forwards;
+}
+
+@keyframes page-entrance {
+    0% {
+        opacity: 0;
+        transform: scale(1.02) skewY(1deg);
+        filter: brightness(2) contrast(1.5);
+    }
+
+    30% {
+        opacity: 1;
+        transform: scale(0.98) skewY(-0.5deg);
+        filter: brightness(1.5) contrast(1.2) hue-rotate(10deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) skewY(0);
+        filter: brightness(1) contrast(1);
+    }
+}
+
+/* ============================================================
+   HEX CHECKBOX (Codex Section 4.2)
+   Diamond-shaped selection control
+   ============================================================ */
+
+.hex-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    cursor: pointer;
+    position: relative;
+    padding: var(--space-xs) 0;
+}
+
+/* Hide native input visually but keep for a11y */
+.hex-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+/* The Visual Diamond Container */
+.hex-checkbox-visual {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* Ensure it doesn't get squashed */
+    flex-shrink: 0;
+}
+
+/* The actual rotating shape */
+.hex-checkbox-shape {
+    width: 16px;
+    height: 16px;
+    background-color: var(--color-bg-void);
+    border: 1px solid var(--color-border-dim);
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    transform: rotate(45deg);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+    /* Subtle depth */
+}
+
+/* Hover State */
+.hex-checkbox-wrapper:hover .hex-checkbox-shape {
+    border-color: var(--color-text-muted);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+/* Checked State - The Core Activation */
+.hex-checkbox-input:checked+.hex-checkbox-visual .hex-checkbox-shape {
+    background-color: var(--color-primary-action);
+    border-color: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+/* Focus State A11y */
+.hex-checkbox-input:focus-visible+.hex-checkbox-visual .hex-checkbox-shape {
+    border-color: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary), 0 0 0 2px var(--color-bg-void), 0 0 0 4px var(--color-border-dim);
+}
+
+/* Label Styling */
+.hex-checkbox-label {
+    font-family: var(--font-interface);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    transition: color var(--duration-snap) ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Active Label */
+.hex-checkbox-input:checked~.hex-checkbox-label {
+    color: var(--color-text-primary);
+    text-shadow: 0 0 8px rgba(57, 255, 255, 0.3);
+}
+
+/* ============================================================
+   MACHINE TOGGLE (Codex Section 4.3)
+   Physical switch simulation
+   ============================================================ */
+
+.machine-toggle {
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: middle;
+    width: 60px;
+    height: 32px;
+}
+
+/* Hide input */
+.machine-toggle input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+/* The Track - Mechanical Housing */
+.machine-toggle-track {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    border: 1px solid var(--color-border-dim);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+    display: block;
+}
+
+/* Labels inside the track */
+.machine-toggle-text-on,
+.machine-toggle-text-off {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-interface);
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    z-index: 1;
+    line-height: 1;
+}
+
+.machine-toggle-text-on {
+    left: 8px;
+    color: #000;
+    opacity: 0;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.machine-toggle-text-off {
+    right: 8px;
+    color: var(--color-primary-alert);
+    opacity: 1;
+}
+
+/* The Knob - Sliding Actuator */
+.machine-toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 26px;
+    bottom: 2px;
+    background-color: var(--color-primary-alert);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+    transition: all 0.3s cubic-bezier(0, 1, 0, 1);
+    z-index: 2;
+}
+
+/* Hover State */
+.machine-toggle:hover .machine-toggle-knob {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+}
+
+/* CHECKED STATE (ON) */
+
+/* Knob moves right */
+.machine-toggle input:checked+.machine-toggle-track .machine-toggle-knob {
+    left: calc(100% - 28px);
+    background-color: var(--color-primary-action);
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
+}
+
+/* Hover ON State */
+.machine-toggle:hover input:checked+.machine-toggle-track .machine-toggle-knob {
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
+}
+
+/* Track Border Glows */
+.machine-toggle input:checked+.machine-toggle-track {
+    border-color: rgba(57, 255, 20, 0.5);
+}
+
+/* Labels visibility */
+.machine-toggle input:checked+.machine-toggle-track .machine-toggle-text-on {
+    opacity: 1;
+    color: var(--color-primary-action);
+}
+
+.machine-toggle input:checked+.machine-toggle-track .machine-toggle-text-off {
+    opacity: 0;
+}
+
+/* Knob Focus */
+.machine-toggle input:focus-visible+.machine-toggle-track {
+    outline: 1px solid var(--color-primary-action);
+    box-shadow: 0 0 0 2px var(--color-bg-void), 0 0 0 4px var(--color-border-dim);
+}
+
+/* Component Wrapper Spacing */
+.toggle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: var(--space-md);
+    border: 1px solid var(--color-border-dim);
+    margin-bottom: var(--space-sm);
+}
+
+.toggle-item:last-child {
+    margin-bottom: 0;
+}
+
+.toggle-info {
+    flex: 1;
+    padding-right: var(--space-md);
+}
+
+.toggle-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.toggle-description {
+    font-family: var(--font-interface);
+    font-size: 0.75rem;
+    color: rgba(227, 218, 201, 0.4);
+    margin-top: 4px;
+    line-height: 1.3;
 }
