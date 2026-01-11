@@ -96,12 +96,47 @@ cp .env.example .env.local
 
 ### Environment Variables
 
+Environment variables store configuration that changes between environments (local, staging, production).
+
+#### Env File Strategy
+
+| File | Purpose | Commit to Git? |
+|------|---------|----------------|
+| `.env.example` | Template for the team | ✅ Yes |
+| `.env.local` | Your local machine only | ❌ Never |
+| `.env.production` | Production overrides | ❌ Never |
+
+#### Setup
+
+1. Copy the template: `cp .env.example .env.local`
+2. Fill in your local values
+
 ```env
-# .env.local
-NEXT_PUBLIC_API_URL=https://api.warlogs.de
-NEXT_PUBLIC_WS_URL=wss://api.warlogs.de/ws
+# .env.example (committed — template)
+NEXT_PUBLIC_API_URL=
+NEXT_PUBLIC_WS_URL=
+NEXT_PUBLIC_APP_ENV=
+```
+
+```env
+# .env.local (gitignored — your values)
+NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_WS_URL=ws://localhost:5000/ws
 NEXT_PUBLIC_APP_ENV=development
 ```
+
+#### The `NEXT_PUBLIC_` Prefix
+
+| Prefix | Accessible in... | Use for... |
+|--------|------------------|------------|
+| `NEXT_PUBLIC_` | Browser + Server | API URLs, public config |
+| *(no prefix)* | Server only | Secrets, API keys |
+
+> ⚠️ **Never expose secrets with `NEXT_PUBLIC_`** — these values are bundled into the client-side JavaScript.
+
+#### Production (Coolify)
+
+In production, environment variables are set directly in the **Coolify dashboard**, not via files. This is more secure and allows changes without redeployment.
 
 ### Development
 
