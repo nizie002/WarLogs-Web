@@ -183,9 +183,39 @@ npm run type-check
 
 ---
 
-## 🎨 Design System
+## 🎨 Grimdark Design Codex
 
-*Documentation pending — design tokens and component styles will be documented here.*
+The UI follows the **"Grimdark Modern"** aesthetic: high-contrast, tactical, and atmospheric. It simulates a futuristic military interface ("The Strategium") with neon accents against a deep void.
+
+### 💎 Design Tokens
+
+| Token | Value | Purpose |
+|-------|-------|---------|
+| `--color-bg-void` | `#0a0a0a` | Deepest background layer |
+| `--color-bg-surface` | `#1a1c1e` | Component surface / cards |
+| `--color-primary-action` | `#39ff14` | Neon Green / Success / Actions |
+| `--color-primary-alert` | `#ef4444` | Red / Danger / Errors |
+| `--color-text-primary` | `#e3dac9` | Parchment White / Primary Text |
+| `--font-display` | `Cinzel` | Ritualistic & Heading Typography |
+| `--font-interface` | `Rajdhani` | Technical & Data Typography |
+
+### 🔒 Component Locking Policy
+
+> [!IMPORTANT]
+> **COMPONENTS ARE LOCKED.** The core design system components in `src/components` are considered stable and feature-complete. To maintain visual consistency and "The Strategium" brand identity, these files **SHOULD NOT** be modified for feature-specific logic.
+
+- **Modification Rule:** Only structural bugs or accessibility fixes are permitted.
+- **Extension Rule:** If you need a new variant, create a wrapper or a new component based on these primitives.
+- **Style Rule:** Do not bypass global tokens. All colors and spacings must use CSS variables.
+
+### 📦 Component Library
+
+| Category | Components |
+|----------|------------|
+| **UI Primitives** | Button, Card, Input, Label, Value, StatusBadge, StatusLight |
+| **Interactive** | HexCheckbox, MachineToggle, CogitatorSelect |
+| **Feedback** | LoadingRitual, Modal, Toast |
+| **Data Layouts** | Table, LogEntry |
 
 ---
 

@@ -1,3 +1,9 @@
+/**
+ * 🔒 WARLOGS DESIGN SYSTEM - CORE COMPONENT (LOCKED)
+ * This component is a core primitive of the WarLogs Design System.
+ * To maintain visual consistency, this file is PROTECTED against logic changes.
+ * Extension and bugfixes only. See README.md for the locking policy.
+ */
 'use client';
 
 import { useState, useId } from 'react';
