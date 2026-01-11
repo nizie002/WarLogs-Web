@@ -47,9 +47,9 @@ The application is designed with a mobile-first approach, progressively enhancin
 
 | Breakpoint | Target | Primary Use Case |
 |------------|--------|------------------|
-| `< 768px` | 📱 Mobile | Quick lookups, profile checks |
-| `768px - 1024px` | 📱 Tablet | Spectating live games, casual browsing |
-| `> 1024px` | 💻 Desktop | Full archive access, administration, deep analytics |
+| `< 768px` | 📱 Mobile | Quick lookups, participating in games at the table |
+| `768px - 1024px` | 📱 Tablet | hosting the game, casual browsing |
+| `> 1024px` | 💻 Desktop | spectating at home, full archive access, administration, deep analytics |
 
 ### Design Principles
 
