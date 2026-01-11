@@ -10,6 +10,7 @@ export function StatusLight({
   ...props
 }: StatusLightProps) {
   const classes = `status-light ${status} ${className}`.trim();
+  const ariaLabel = `Status: ${status}`;
 
-  return <span className={classes} {...props} />;
+  return <span className={classes} role="status" aria-label={ariaLabel} {...props} />;
 }

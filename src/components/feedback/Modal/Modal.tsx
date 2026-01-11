@@ -39,9 +39,9 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         }
       }}
     >
-      <div className="data-slate">
+      <div className="data-slate" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div className="modal-header">
-          <h3 className="modal-title">{title}</h3>
+          <h3 id="modal-title" className="modal-title">{title}</h3>
           <button
             type="button"
             className="modal-close"

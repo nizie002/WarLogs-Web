@@ -995,6 +995,14 @@ textarea:focus-visible,
     font-size: 0.75rem;
 }
 
+/* Large Action Button Variant */
+.action-button.lg {
+    min-width: 160px;
+    height: 48px;
+    padding: 0 var(--space-xl);
+    font-size: 1rem;
+}
+
 /* Active / Toggled State */
 .action-button.is-active {
     background: rgba(57, 255, 20, 0.15);
@@ -1757,65 +1765,8 @@ select.cogitator-input option {
 
 /* ============================================================
    4.3.1 LOADING RITUAL (Codex Section 4.3.1)
+   Handled by .loading-ritual section later in file
    ============================================================ */
-.loading-ritual {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-xl);
-}
-
-.segmented-progress {
-    width: 200px;
-    height: 4px;
-    background: var(--color-border-dim);
-    display: flex;
-    gap: 2px;
-}
-
-.progress-segment {
-    flex: 1;
-    height: 100%;
-    background: transparent;
-    transition: background var(--duration-snap) var(--easing-mechanical);
-}
-
-.progress-segment.filled {
-    background: var(--color-primary-action);
-    box-shadow: var(--shadow-glow-primary);
-}
-
-.loading-glyph {
-    width: 48px;
-    height: 48px;
-    color: var(--color-primary-action);
-    animation: pulse-heartbeat 1000ms ease-in-out infinite;
-}
-
-@keyframes pulse-heartbeat {
-
-    0%,
-    100% {
-        opacity: 0.5;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-}
-
-.loading-text {
-    font-family: var(--font-interface);
-    font-weight: 700;
-    color: var(--color-text-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    animation: text-blink 1500ms ease-in-out infinite;
-    font-size: 0.875rem;
-}
 
 @keyframes text-blink {
 

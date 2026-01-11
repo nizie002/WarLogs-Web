@@ -12,7 +12,7 @@ export interface ToastProps {
 
 export function Toast({ type, title, message, onClose }: ToastProps) {
   return (
-    <div className={`vox-toast ${type}`}>
+    <div className={`vox-toast ${type}`} role="alert" aria-live="polite">
       <div className="vox-toast-icon">
         {type === 'success' && '✓'}
         {type === 'error' && '✕'}

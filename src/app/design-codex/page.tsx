@@ -10,48 +10,10 @@ import { HexCheckbox } from '@/components/ui/HexCheckbox';
 import { MachineToggle } from '@/components/ui/MachineToggle';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Modal } from '@/components/feedback/Modal';
-import { LoadingRitual } from '@/components/ui/LoadingRitual/LoadingRitual';
+import { LoadingRitual } from '@/components/feedback/LoadingRitual';
+import { CogitatorSelect } from '@/components/ui/CogitatorSelect';
 
-const CogitatorSelect = ({ label, options, defaultValue }: { label: string, options: string[], defaultValue: string }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [selected, setSelected] = useState(defaultValue);
 
-    return (
-        <div className={`cogitator-select ${isOpen ? 'is-open' : ''}`}>
-            <div className="cogitator-label">{label}</div>
-            <button
-                className="cogitator-select__trigger"
-                onClick={() => setIsOpen(!isOpen)}
-                onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-                type="button"
-            >
-                <span>{selected}</span>
-                <span className="cogitator-select__chevron">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </span>
-            </button>
-
-            {isOpen && (
-                <div className="cogitator-select__dropdown">
-                    {options.map((option) => (
-                        <div
-                            key={option}
-                            className={`cogitator-select__option ${selected === option ? 'is-selected' : ''}`}
-                            onClick={() => {
-                                setSelected(option);
-                                setIsOpen(false);
-                            }}
-                        >
-                            {option}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-};
 
 export default function DesignCodex() {
     const [isGlitching, setIsGlitching] = useState(false);
