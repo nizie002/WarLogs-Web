@@ -308,7 +308,7 @@ export default function DesignCodex() {
                         <div>
                             <div className="label" style={{ marginBottom: 'var(--space-sm)' }}>GLITCH (CHROMATIC ABERRATION)</div>
                             <Button
-                                variant="outline"
+                                variant="secondary"
                                 onClick={triggerGlitch}
                                 className={isGlitching ? 'glitch glitch--active' : ''}
                                 data-text="TRIGGER GLITCH"
@@ -326,7 +326,7 @@ export default function DesignCodex() {
                         <div>
                             <div className="label" style={{ marginBottom: 'var(--space-sm)' }}>PAGE TRANSITION GLITCH</div>
                             <Button
-                                variant="outline"
+                                variant="secondary"
                                 onClick={triggerTransition}
                             >
                                 <span style={{ marginRight: '8px', display: 'flex' }}>
