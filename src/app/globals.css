@@ -1,42 +1,2405 @@
+﻿/* ============================================================
+   WARLOGS DESIGN CODEX - DEFINITIVE IMPLEMENTATION (v6)
+   The Unified Component Architecture
+   ============================================================
+   
+   This stylesheet implements the complete WarLogs Design System,
+   featuring a consolidated, token-based component architecture:
+   
+   - Unified Card System (Flexible containers)
+   - Unified Value & Label Systems (Standardized data display)
+   - Atmospheric Overlays (Noise, scanning effects)
+   - High-Fidelity Interaction Design (Glows, glitch transitions)
+   - Mobile-First Responsive Navigation (Sidebar + Tactical Bar)
+   
+   ============================================================ */
+
+/* ============================================================
+   1. DESIGN TOKENS (Codex Section 1.2)
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    /* 1.2 Colors - Backgrounds */
+    --color-bg-void: #0a0a0a;
+    --color-bg-surface: #1a1c1e;
+    --color-border-dim: #2d3032;
+
+    /* 1.2 Colors - Content */
+    --color-text-primary: #e3dac9;
+    --color-text-muted: #9CA3AF;
+
+    /* 1.2 Colors - Accents */
+    --color-primary-action: #39ff14;
+    --color-primary-alert: #ef4444;
+
+    /* 1.2 Spacing Scale */
+    --space-unit: 4px;
+    --space-xs: 8px;
+    --space-sm: 12px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    /* 1.2 Shadow System */
+    --shadow-glow-primary: 0 0 10px #39ff14;
+    --shadow-glow-primary-intense: 0 0 20px #39ff14;
+    --shadow-glow-alert: 0 0 10px #ef4444;
+    --shadow-backdrop: 0 0 0 9999px rgba(0, 0, 0, 0.8);
+
+    /* 1.2 Timing System */
+    --duration-snap: 150ms;
+    --duration-modal: 300ms;
+    --duration-glitch: 100ms;
+    --easing-mechanical: linear;
+    --easing-aggressive: cubic-bezier(0, 1, 0, 1);
+
+    /* Additional Physics */
+    --glitch-displacement: 4px;
+
+    /* 1.2 Typography */
+    --font-display: 'Cinzel', serif;
+    --font-interface: 'Rajdhani', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   2. GLOBAL STYLES & RESETS
+   ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-interface);
+    font-weight: 500;
+    background-color: var(--color-bg-void);
+    color: var(--color-text-primary);
+    line-height: 1.6;
 }
 
+
+/* ============================================================
+   2.2 TEXTURE & ATMOSPHERIC EFFECTS (Codex Section 2.2)
+   ============================================================ */
+
+
+/* Scanline Effect - CRITICAL: Global background layer */
+.scanline-effect {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent 2px,
+            rgba(57, 255, 20, 0.02) 2px,
+            rgba(57, 255, 20, 0.02) 4px);
+    pointer-events: none;
+    z-index: 0;
+    animation: scanline 15s linear infinite;
+}
+
+/* Base application layer to sit above background effects */
+.app-wrapper {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: flex;
+}
+
+@keyframes scanline {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 0 100%;
+    }
+}
+
+
+
+/* ============================================================
+   3. TYPOGRAPHY (Codex Section 1.2)
+   ============================================================ */
+
+h1,
+h2,
+h3,
+.display-font {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+}
+
+/* Codex Documentation Layout */
+.codex-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: start;
+    margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 1024px) {
+    .codex-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+}
+
+.codex-description {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    border-left: 2px solid var(--color-border-dim);
+    padding-left: var(--space-lg);
+}
+
+.codex-description h4 {
+    color: var(--color-text-primary);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin-bottom: var(--space-sm);
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.codex-description code {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 4px;
+    border: 1px solid var(--color-border-dim);
+    color: var(--color-primary-action);
+    font-size: 0.8em;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+}
+
+h2 {
+    font-size: 1.75rem;
+}
+
+h3 {
+    font-size: 1.25rem;
+}
+
+/* Tabular Numbers for Stats */
+.tabular-nums,
+.value,
+.manifest-cell,
+.log-timestamp {
+    font-variant-numeric: tabular-nums;
+}
+
+.text-muted {
+    color: var(--color-text-muted);
+}
+
+.text-accent {
+    color: var(--color-primary-action);
+}
+
+.text-alert {
+    color: var(--color-primary-alert);
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+/* ============================================================
+   FOCUS STATES (Codex 2.1 Border System)
+   All interactive elements get green border + glow on focus
+   ============================================================ */
+
+*:focus-visible {
+    outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 1px solid var(--color-primary-action);
+    outline-offset: 2px;
+    box-shadow: var(--shadow-glow-primary);
+}
+
+/* ============================================================
+   4.1.1 ACTION BUTTON (Codex Section 4.1.1)
+   ============================================================ */
+
+.action-button {
+    min-width: 120px;
+    height: 40px;
+    /* Codex 4.1.1: 40px Desktop, 44px Mobile */
+    padding: 0 var(--space-lg);
+    background: transparent;
+    border: 1px solid var(--color-primary-action);
+    color: var(--color-primary-action);
+    text-transform: uppercase;
+    font-family: var(--font-interface);
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    position: relative;
+    /* Simple rectangular borders per design vision */
+}
+
+.action-button i {
+    width: 16px;
+    height: 16px;
+}
+
+/* Hover: Glow effect as energy flows through (Codex 1.1 Visual Physics) */
+.action-button:hover {
+    box-shadow: var(--shadow-glow-primary);
+    background: rgba(57, 255, 20, 0.08);
+}
+
+/* Active: Lightning flash - fills completely, inverts, like a switch engaging */
+.action-button:active {
+    background: var(--color-primary-action);
+    color: var(--color-bg-void);
+    box-shadow: var(--shadow-glow-primary-intense);
+}
+
+/* Lightning flash animation for dramatic effect */
+@keyframes lightning-flash {
+    0% {
+        background: var(--color-primary-action);
+        color: var(--color-bg-void);
+        box-shadow: var(--shadow-glow-primary-intense);
+    }
+
+    100% {
+        background: transparent;
+        color: var(--color-primary-action);
+        box-shadow: var(--shadow-glow-primary);
+    }
+}
+
+.action-button:disabled {
+    border-color: var(--color-border-dim);
+    color: var(--color-text-muted);
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Secondary Button Variant */
+.action-button.secondary {
+    border-color: var(--color-border-dim);
+    color: var(--color-text-muted);
+}
+
+.action-button.secondary:hover {
+    border-color: var(--color-primary-action);
+    color: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.action-button.secondary:active {
+    background: var(--color-primary-action);
+    color: var(--color-bg-void);
+}
+
+/* Danger Button Variant */
+.action-button.danger {
+    border-color: var(--color-primary-alert);
+    color: var(--color-primary-alert);
+}
+
+.action-button.danger:hover {
+    box-shadow: var(--shadow-glow-alert);
+}
+
+/* ============================================================
+   4.1.2 COGITATOR INPUT (Codex Section 4.1.2)
+   BOX-STYLE with chamfered corners to match design vision
+   ============================================================ */
+
+.cogitator-input-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: var(--space-lg);
+}
+
+.cogitator-input {
+    width: 100%;
+    height: 48px;
+    background-color: #0d0d0d;
+    /* Opaque dark background to block scanlines */
+    border: 1px solid var(--color-border-dim);
+    color: var(--color-text-primary);
+    font-family: var(--font-interface);
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0 var(--space-md);
+    transition: border-color var(--duration-snap) var(--easing-mechanical),
+        background var(--duration-snap) var(--easing-mechanical),
+        box-shadow var(--duration-snap) var(--easing-mechanical);
+    cursor: text;
+    /* Simple rectangular borders per design vision */
+}
+
+.cogitator-input:focus {
+    outline: none;
+    border-color: var(--color-primary-action);
+    background-color: #111111;
+    /* Slightly lighter when active */
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.cogitator-input::placeholder {
+    color: transparent;
+}
+
+.cogitator-input-label {
+    position: absolute;
+    top: -8px;
+    left: var(--space-sm);
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: #111111;
+    /* Matches card background */
+    padding: 0 var(--space-xs);
+    pointer-events: none;
+    transition: color var(--duration-snap) var(--easing-mechanical);
+}
+
+.cogitator-input:focus+.cogitator-input-label {
+    color: var(--color-primary-action);
+}
+
+/* Error State */
+.cogitator-input.error {
+    border-color: var(--color-primary-alert) !important;
+}
+
+.cogitator-input.error:focus,
+.cogitator-input.error:focus-visible {
+    border-color: var(--color-primary-alert) !important;
+    box-shadow: var(--shadow-glow-alert) !important;
+    outline: none !important;
+}
+
+.cogitator-input.error+.cogitator-input-label,
+.cogitator-input.error:focus+.cogitator-input-label,
+.cogitator-input.error:focus-visible+.cogitator-input-label {
+    color: var(--color-primary-alert) !important;
+}
+
+.cogitator-input-helper {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+}
+
+.cogitator-input.error~.cogitator-input-helper {
+    color: var(--color-primary-alert);
+}
+
+/* Hide default browser number spinners */
+.cogitator-input[type="number"]::-webkit-inner-spin-button,
+.cogitator-input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cogitator-input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+/* Select Input Specifics */
+select.cogitator-input {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 32px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+}
+
+select.cogitator-input option {
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+}
+
+/* Custom Number Controls Container (to be added) */
+.number-controls {
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-right: 8px;
+}
+
+.num-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    line-height: 1;
+    font-size: 0.6rem;
+    transition: color 0.2s;
+}
+
+.num-btn:hover {
+    color: var(--color-primary-action);
+}
+
+/* ============================================================
+   4.1.3 HEX-CHECKBOX (Codex Section 4.1.3)
+   ============================================================ */
+
+.hex-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    cursor: pointer;
+    padding: var(--space-xs) 0;
+}
+
+.hex-checkbox {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--color-border-dim);
+    background: #0d0d0d;
+    /* Opaque background to block scanlines */
+    position: relative;
+    cursor: pointer;
+    transform: rotate(45deg);
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    flex-shrink: 0;
+}
+
+.hex-checkbox:hover {
+    border-color: var(--color-primary-action);
+    background: rgba(57, 255, 20, 0.1);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.hex-checkbox.checked {
+    border-color: var(--color-primary-action);
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.hex-checkbox.checked::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: var(--color-bg-void);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    /* This creates a 'hollow' effect inside the filled diamond for more high-tech look */
+    display: none;
+    /* Keep it solid for now as per design vision */
+}
+
+@keyframes fill-from-center {
+    from {
+        clip-path: circle(0% at center);
+    }
+
+    to {
+        clip-path: circle(100% at center);
+    }
+}
+
+.hex-checkbox-label {
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    cursor: pointer;
+}
+
+/* ============================================================
+   4.1.4 MACHINE TOGGLE (Codex Section 4.1.4) - Accessible
+   With ON/OFF label support
+   ============================================================ */
+
+.machine-toggle {
+    width: 72px;
+    /* Increased to fit labels and height balance */
+    height: 32px;
+    border: 1px solid var(--color-border-dim);
+    background: #0d0d0d;
+    position: relative;
+    cursor: pointer;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    flex-shrink: 0;
+    display: block;
+    overflow: hidden;
+    /* OFF Style (Default) */
+    border-color: var(--color-primary-alert);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.machine-toggle:hover {
+    box-shadow: 0 0 10px rgba(255, 49, 49, 0.1);
+}
+
+.machine-toggle input {
+    display: none;
+}
+
+/* Internal Label */
+.machine-toggle::before {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    content: 'OFF';
+    right: 8px;
+    color: var(--color-primary-alert);
+    text-shadow: 0 0 8px var(--color-primary-alert);
+}
+
+.machine-toggle-knob {
+    width: 26px;
+    height: 26px;
+    background: var(--color-primary-alert);
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: all var(--duration-snap) var(--easing-aggressive);
+    display: block;
+    box-shadow: var(--shadow-glow-alert);
+}
+
+/* ON Style */
+.machine-toggle:has(input:checked) {
+    background: rgba(57, 255, 20, 0.1);
+    border-color: var(--color-primary-action);
+}
+
+.machine-toggle:has(input:checked):hover {
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+.machine-toggle:has(input:checked)::before {
+    content: 'ON';
+    left: 8px;
+    right: auto;
+    color: var(--color-primary-action);
+    text-shadow: 0 0 8px var(--color-primary-action);
+}
+
+.machine-toggle input:checked+.machine-toggle-knob {
+    left: 43px;
+    /* 72 - 3 - 26 = 43 */
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.toggle-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.toggle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    background: #111111;
+    /* Solid dark grey to block scanlines */
+    border: 1px solid var(--color-border-dim);
+    /* Simple rectangular borders */
+}
+
+.toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.toggle-label {
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.toggle-description {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+/* ============================================================
+   4.2.2 COGITATOR SIDEBAR (Codex Section 4.2.2)
+   ============================================================ */
+
+.cogitator-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    /* Adjusted to accommodate headline text */
+    height: 100vh;
+    background: var(--color-bg-surface);
+    /* Fully opaque */
+    border-right: 1px solid var(--color-border-dim);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-border-dim);
+}
+
+.sidebar-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Logo icon with intense glow - "Light from Darkness" (Codex 1.1) */
+.sidebar-logo-icon {
+    color: var(--color-primary-action);
+    filter: drop-shadow(0 0 8px var(--color-primary-action)) drop-shadow(0 0 16px var(--color-primary-action));
+    animation: logo-pulse 3000ms ease-in-out infinite;
+}
+
+@keyframes logo-pulse {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 8px var(--color-primary-action)) drop-shadow(0 0 16px var(--color-primary-action));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 12px var(--color-primary-action)) drop-shadow(0 0 24px var(--color-primary-action));
+    }
+}
+
+/* Brand title with Gauss Green glow */
+.sidebar-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 900;
+    /* Black weight for brand (Codex 1.2) */
+    letter-spacing: 0.15em;
+    color: var(--color-primary-action);
+    text-shadow: 0 0 10px var(--color-primary-action),
+        0 0 20px rgba(57, 255, 20, 0.5);
+    margin: 0;
+    text-align: left;
+}
+
+.sidebar-subtitle {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+    text-align: left;
+}
+
+.sidebar-menu {
+    flex: 1;
+    padding: var(--space-lg) 0;
+    overflow-y: auto;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    position: relative;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+
+.sidebar-item i {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Codex 4.2.2: Hover brightens slightly ("Scanline" effect) */
+.sidebar-item:hover {
+    color: var(--color-text-primary);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Codex 4.2.2: Marker slides in from left on hover */
+.sidebar-item:hover::before {
+    transform: translateX(0);
+}
+
+/* 3px vertical marker - slides from left (Codex 4.2.2) */
+.sidebar-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+    transform: translateX(-3px);
+    transition: transform var(--duration-snap) var(--easing-mechanical);
+}
+
+/* Active state: green text, tinted background (Codex 4.2.2) */
+.sidebar-item.active {
+    color: var(--color-primary-action);
+    background: rgba(57, 255, 20, 0.08);
+}
+
+.sidebar-item.active::before {
+    transform: translateX(0);
+}
+
+.sidebar-footer {
+    padding: var(--space-lg);
+    border-top: 1px solid var(--color-border-dim);
+}
+
+.sidebar-status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+/* ============================================================
+   4.3.1 LOADING RITUAL (Codex Section 4.3.1)
+   ============================================================ */
+.loading-ritual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+}
+
+.segmented-progress {
+    width: 200px;
+    height: 4px;
+    background: var(--color-border-dim);
+    display: flex;
+    gap: 2px;
+}
+
+.progress-segment {
+    flex: 1;
+    height: 100%;
+    background: transparent;
+    transition: background var(--duration-snap) var(--easing-mechanical);
+}
+
+.progress-segment.filled {
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.loading-glyph {
+    width: 48px;
+    height: 48px;
+    color: var(--color-primary-action);
+    animation: pulse-heartbeat 1000ms ease-in-out infinite;
+}
+
+@keyframes pulse-heartbeat {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+.loading-text {
+    font-family: var(--font-interface);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    animation: text-blink 1500ms ease-in-out infinite;
+    font-size: 0.875rem;
+}
+
+@keyframes text-blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* ============================================================
+   4.3.2 VOX TOAST (Codex Section 4.3.2)
+   ============================================================ */
+
+.toast-container {
+    position: fixed;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    pointer-events: none;
+}
+
+.vox-toast {
+    width: 320px;
+    min-height: 64px;
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-dim);
+    border-left-width: 4px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    animation: slide-in-right var(--duration-modal) var(--easing-aggressive);
+    pointer-events: all;
+}
+
+.vox-toast.success {
+    border-left-color: var(--color-primary-action);
+}
+
+.vox-toast.error {
+    border-left-color: var(--color-primary-alert);
+}
+
+.vox-toast.info {
+    border-left-color: var(--color-primary-action);
+}
+
+/* Codex 4.3.2: NO fade-in â€“ slide-in only */
+@keyframes slide-in-right {
+    from {
+        transform: translateX(400px);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-out-right {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(400px);
+    }
+}
+
+.vox-toast.exiting {
+    animation: slide-out-right 200ms var(--easing-mechanical) forwards;
+}
+
+.vox-toast-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.vox-toast-content {
+    flex: 1;
+}
+
+.vox-toast-title {
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    margin-bottom: var(--space-xs);
+}
+
+.vox-toast-text {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+/* ============================================================
+   4.3.3 DATA SLATE - Modal (Codex Section 4.3.3)
+   ============================================================ */
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(2px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fade-in var(--duration-modal) ease-out;
+}
+
+.modal-backdrop.active {
+    display: flex;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fill-sequence {
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+/* ============================================================
+   4.7 CUSTOM SELECT (Script-Enhanced Dropdown)
+   ============================================================ */
+
+/* Hide the original select when custom one is active */
+select.cogitator-input.custom-select-initialized {
+    display: none;
+}
+
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+    width: 100%;
+}
+
+.custom-select {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-select-trigger {
+    width: 100%;
+    height: 48px;
+    background-color: #0d0d0d;
+    border: 1px solid var(--color-border-dim);
+    color: var(--color-text-primary);
+    font-family: var(--font-interface);
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0 var(--space-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+}
+
+.custom-select-trigger::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform var(--duration-snap) var(--easing-mechanical);
+}
+
+.custom-select.open .custom-select-trigger {
+    border-color: var(--color-primary-action);
+    background-color: #111111;
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.custom-select.open .custom-select-trigger::after {
+    transform: rotate(180deg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2339ff14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+.custom-options {
+    position: absolute;
+    display: block;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid var(--color-primary-action);
+    border-top: 0;
+    background: #0d0d0d;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 100;
+    margin-top: 2px;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.custom-select.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+.custom-option {
+    position: relative;
+    display: block;
+    padding: var(--space-sm) var(--space-md);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.1s var(--easing-mechanical);
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.custom-option:last-child {
+    border-bottom: none;
+}
+
+.custom-option:hover,
+.custom-option.selected {
+    color: #000;
+    background-color: var(--color-primary-action);
+}
+
+.custom-option.selected::after {
+    content: 'SELECTED';
+    position: absolute;
+    right: 10px;
+    font-size: 0.6em;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+}
+
+.data-slate {
+    width: 90vw;
+    max-width: 600px;
+    max-height: 80vh;
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-dim);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Simple rectangular borders */
+
+    /* Vertical fold animation */
+    animation: fold-vertical var(--duration-modal) var(--easing-aggressive);
+    transform-origin: center;
+}
+
+@keyframes fold-vertical {
+    from {
+        transform: scaleY(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-border-dim);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg,
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.2) 100%);
+}
+
+.modal-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: 0.1em;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid var(--color-border-dim);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-snap) var(--easing-mechanical);
+    /* Simple rectangular borders */
+}
+
+.modal-close:hover {
+    border-color: var(--color-primary-alert);
+    color: var(--color-primary-alert);
+    box-shadow: var(--shadow-glow-alert);
+}
+
+.modal-content {
+    flex: 1;
+    padding: var(--space-xl);
+    overflow-y: auto;
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: flex-end;
+    margin-top: var(--space-xl);
+}
+
+/* ============================================================
+   4.4.1 UNIFIED CARD SYSTEM
+   ============================================================ */
+
+/* Base Card - shared by all card variants */
+.card {
+    border: 1px solid var(--color-border-dim);
+    padding: var(--space-md);
+    position: relative;
+    transition: border-color var(--duration-snap) var(--easing-mechanical),
+        box-shadow var(--duration-snap) var(--easing-mechanical);
+    /* Background is now controlled solely by modifiers (solid/glass) */
+}
+
+/* --- AXIS 1: VISUAL PROMINENCE --- */
+
+/* Tier 1: Subtle (Structure only) - No border, defined by background only */
+.card--subtle {
+    border-color: transparent;
+}
+
+/* Tier 2: Standard (Content container) - Adds Tech Corner definition */
+.card--standard {
+    border-color: var(--color-border-dim);
+}
+
+.card--standard::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 12px;
+    height: 12px;
+    border-top: 2px solid var(--color-text-muted);
+    border-left: 2px solid var(--color-text-muted);
+    transition: inherit;
+}
+
+/* Tier 3: Accent (High Attention) */
+.card--accent {
+    border-color: var(--color-border-dim);
+    border-left: 3px solid var(--color-primary-action);
+}
+
+/* --- AXIS 2: OPACITY --- */
+
+/* Solid: Opaque and uses the lighter surface color to stand out from the void */
+.card--solid {
+    background: var(--color-bg-surface);
+}
+
+/* Glass: Atmospheric, lets scanlines bleed */
+.card--glass {
+    background: rgba(13, 13, 13, 0.7);
+    backdrop-filter: blur(2px);
+}
+
+/* Hover effect only for High Priority (Accent) cards */
+.card--accent:hover {
+    border-color: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+/* Standardized Card Styles */
+
+/* .card--spaced DELETED (Use utility classes or grid/flex gaps) */
+
+/* Card Header */
+.card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-md);
+}
+
+/* Centered header variant for stats display */
+.card__header--centered {
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.card__title {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    margin: 0 0 var(--space-xs) 0;
+}
+
+.card__subtitle {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+.card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+/* ============================================================
+   UNIFIED VALUE SYSTEM
+   ============================================================ */
+
+/* Base value - tabular nums, bold */
+.value {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-primary);
+}
+
+/* Value sizes */
+.value--sm {
+    font-size: 1rem;
+}
+
+.value--md {
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-primary-action);
+    text-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+}
+
+.value--lg {
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-bottom: var(--space-xs);
+    color: var(--color-primary-action);
+    text-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+}
+
+/* Value color variants */
+.value--accent {
+    color: var(--color-primary-action);
+}
+
+.value--alert {
+    color: var(--color-primary-alert);
+}
+
+.value--muted {
+    color: var(--color-text-primary);
+}
+
+/* ============================================================
+   UNIFIED LABEL SYSTEM
+   ============================================================ */
+
+/* Base label */
+.label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Larger inline label for stat rows */
+.label--inline {
+    font-size: 0.875rem;
+    letter-spacing: 0;
+}
+
+/* Faction-style label with more spacing */
+.label--faction {
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   STAT ROW - Key-value display
+   ============================================================ */
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid rgba(45, 48, 50, 0.5);
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+/* ============================================================
+   STATUS LIGHTS - Live indicators
+   ============================================================ */
+
+.status-light {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-light.online {
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+    animation: status-pulse 1500ms ease-in-out infinite;
+}
+
+.status-light.critical {
+    background: var(--color-primary-alert);
+    box-shadow: var(--shadow-glow-alert);
+    animation: status-pulse 1500ms ease-in-out infinite;
+}
+
+.status-light.offline {
+    background: var(--color-border-dim);
+    animation: none;
+}
+
+@keyframes status-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ============================================================
+   4.4.2 MANIFEST TABLES (Codex Section 4.4.2)
+   ============================================================ */
+
+.manifest-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.manifest-header {
+    border-bottom: 2px solid var(--color-border-dim);
+}
+
+.manifest-header .manifest-cell {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+}
+
+.manifest-row {
+    height: 48px;
+    border-bottom: 1px solid var(--color-border-dim);
+    transition: background-color var(--duration-snap) var(--easing-mechanical);
+    cursor: pointer;
+}
+
+/* Targeting Brackets on Hover (Codex 4.4.2) */
+.manifest-row:hover {
+    background: rgba(57, 255, 20, 0.05);
+}
+
+/* Full green border around selected/hovered row using outline */
+/* Note: outline on tr is widely supported in modern browsers for this purpose */
+.manifest-row:hover,
+.manifest-row.selected {
+    outline: 1px solid var(--color-primary-action);
+    outline-offset: -1px;
+    box-shadow: var(--shadow-glow-primary);
+    z-index: 10;
+    /* Ensure outline displays on top */
+}
+
+.manifest-cell {
+    padding: var(--space-md);
+    font-family: var(--font-interface);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    text-align: left;
+}
+
+
+/* ============================================================
+   STATUS BADGES - Tactical indicators
+   ============================================================ */
+.status-badge {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--color-border-dim);
+    background: transparent;
+    /* Simple rectangular borders */
+}
+
+/* Active/Live badge with pulsing glow */
+.status-badge.active {
+    border-color: var(--color-primary-action);
+    color: var(--color-primary-action);
+    background: rgba(57, 255, 20, 0.1);
+    box-shadow: var(--shadow-glow-primary);
+    animation: badge-pulse 2000ms ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px var(--color-primary-action);
+    }
+
+    50% {
+        box-shadow: 0 0 15px var(--color-primary-action);
+    }
+}
+
+.status-badge.alert {
+    border-color: var(--color-primary-alert);
+    color: var(--color-primary-alert);
+    background: rgba(239, 68, 68, 0.1);
+    box-shadow: var(--shadow-glow-alert);
+    animation: badge-pulse-alert 2000ms ease-in-out infinite;
+}
+
+@keyframes badge-pulse-alert {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px var(--color-primary-alert);
+    }
+
+    50% {
+        box-shadow: 0 0 15px var(--color-primary-alert);
+    }
+}
+
+/* ============================================================
+   TOOLTIPS (Codex 5.1 - Data Slate Style)
+   ============================================================ */
+
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-dim);
+    padding: var(--space-xs) var(--space-md);
+    color: var(--color-text-primary);
+    font-family: var(--font-interface);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-snap) var(--easing-mechanical);
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    /* Simple rectangular borders */
+}
+
+[data-tooltip]:hover::after {
+    opacity: 1;
+}
+
+/* ============================================================
+   2.3 MOTION DESIGN - Special Effects (Codex Section 2.3)
+   ============================================================ */
+
+/* Glitch Effect - RGB Split with Chromatic Aberration */
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+        filter: brightness(1) drop-shadow(0 0 0 transparent);
+    }
+
+    20% {
+        transform: translateX(calc(var(--glitch-displacement) * -1));
+        filter: brightness(1.3) contrast(1.1) drop-shadow(2px 0 0 rgba(255, 0, 0, 0.6)) drop-shadow(-2px 0 0 rgba(0, 255, 255, 0.6));
+    }
+
+    40% {
+        transform: translateX(var(--glitch-displacement));
+        filter: brightness(0.9) contrast(1.2) drop-shadow(-3px 0 0 rgba(255, 0, 0, 0.5)) drop-shadow(3px 0 0 rgba(0, 255, 255, 0.5));
+    }
+
+    60% {
+        transform: translateX(calc(var(--glitch-displacement) * -0.5));
+        filter: brightness(1.2) drop-shadow(1px 0 0 rgba(255, 0, 0, 0.4)) drop-shadow(-1px 0 0 rgba(0, 255, 255, 0.4));
+    }
+
+    80% {
+        transform: translateX(calc(var(--glitch-displacement) * 0.5));
+        filter: brightness(1.1) drop-shadow(-2px 0 0 rgba(255, 0, 0, 0.3)) drop-shadow(2px 0 0 rgba(0, 255, 255, 0.3));
+    }
+
+    100% {
+        transform: translate(0);
+        filter: brightness(1) drop-shadow(0 0 0 transparent);
+    }
+}
+
+.glitch {
+    animation: glitch var(--duration-glitch) linear;
+}
+
+/* Page Transition Glitch - More pronounced effect for major navigation */
+@keyframes page-glitch {
+    0% {
+        transform: translate(0) skewX(0deg);
+        filter: brightness(1);
+        opacity: 1;
+    }
+
+    10% {
+        transform: translateX(-5px) skewX(-0.5deg);
+        filter: brightness(1.4) contrast(1.3) drop-shadow(4px 0 0 rgba(255, 0, 0, 0.7)) drop-shadow(-4px 0 0 rgba(0, 255, 255, 0.7));
+        opacity: 0.9;
+    }
+
+    20% {
+        transform: translateX(4px) skewX(0.3deg);
+        filter: brightness(0.8) drop-shadow(-3px 0 0 rgba(255, 0, 0, 0.5)) drop-shadow(3px 0 0 rgba(0, 255, 255, 0.5));
+    }
+
+    35% {
+        transform: translateX(-3px);
+        filter: brightness(1.2) drop-shadow(2px 0 0 rgba(255, 0, 0, 0.4)) drop-shadow(-2px 0 0 rgba(0, 255, 255, 0.4));
+        opacity: 0.95;
+    }
+
+    50% {
+        transform: translateX(2px) skewX(-0.2deg);
+        filter: brightness(1.3) contrast(1.1) drop-shadow(-2px 0 0 rgba(255, 0, 0, 0.6)) drop-shadow(2px 0 0 rgba(0, 255, 255, 0.6));
+    }
+
+    65% {
+        transform: translateX(-1px);
+        filter: brightness(0.95);
+    }
+
+    80% {
+        transform: translateX(1px);
+        filter: brightness(1.1) drop-shadow(1px 0 0 rgba(255, 0, 0, 0.2)) drop-shadow(-1px 0 0 rgba(0, 255, 255, 0.2));
+    }
+
+    100% {
+        transform: translate(0) skewX(0deg);
+        filter: brightness(1);
+        opacity: 1;
+    }
+}
+
+.page-glitch {
+    animation: page-glitch 180ms linear;
+}
+
+/* ============================================================
+   LAYOUT - Main App Structure
+   ============================================================ */
+
+.app-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    z-index: 10;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 200px;
+    /* Match sidebar width */
+    height: 100vh;
+    overflow-y: auto;
+    padding: var(--space-2xl);
+    
+    /* NEU: Damit die inneren Seiten wachsen kÃ¶nnen */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Page Container */
+.page {
+    display: none;
+    animation: page-fade-in var(--duration-modal) var(--easing-mechanical);
+    
+    /* NEU: Stellt sicher, dass die Seite die volle Breite nutzt */
+    width: 100%;
+}
+
+.page.active {
+    /* Ã„NDERUNG: Von 'block' zu 'flex' Ã¤ndern, damit flex: 1 greift */
+    display: flex;
+    flex-direction: column;
+    
+    /* NEU: FÃ¼llt den restlichen vertikalen Platz im .main-content auf */
+    flex: 1;
+}
+
+@keyframes page-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border-dim);
+}
+
+.page-header-info h1 {
+    margin-bottom: var(--space-xs);
+}
+
+.page-header-meta {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.page-header-actions {
+    display: flex;
+    gap: var(--space-md);
+}
+
+/* Grids */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+}
+
+/* Section */
+.section {
+    margin-bottom: var(--space-2xl);
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border-dim);
+}
+
+/* Battle Grid - 3 Column Layout */
+.battle-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr 280px;
+    gap: var(--space-lg);
+    
+    /* Ã„NDERUNG: Statt starrer calc() Berechnung nutzen wir flex: 1 */
+    flex: 1; /* FÃ¼llt automatisch den Platz bis unten */
+    min-height: 0; /* Wichtig fÃ¼r Grid in Flex-Containern zum Scrollen */
+}
+
+/* Log Entries */
+.log-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+/* Log Entries - Content Pattern */
+.log-entry {
+    display: flex;
+    gap: var(--space-md);
+    /* padding handles by standard card class */
+}
+
+/* Remove hover effects that conflict with card system */
+.log-timestamp {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    width: 60px;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+.log-content {
+    flex: 1;
+}
+
+.log-event {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    margin-bottom: 2px;
+}
+
+.log-details {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+
+
+/* Scoreboard */
+.scoreboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+/* QR Code Display - Technical scanner aesthetic */
+/* NOTE: Non-canonical placeholder for external library function. DO NOT DELETE. */
+.qr-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+}
+
+.qr-placeholder {
+    width: 200px;
+    height: 200px;
+    border: 2px solid var(--color-primary-action);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(57, 255, 20, 0.03);
+    box-shadow:
+        inset 0 0 40px rgba(57, 255, 20, 0.1),
+        0 0 20px rgba(57, 255, 20, 0.2);
+    position: relative;
+}
+
+/* Corner brackets for scanner aesthetic */
+.qr-placeholder::before,
+.qr-placeholder::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-primary-action);
+}
+
+.qr-placeholder::before {
+    top: 8px;
+    left: 8px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.qr-placeholder::after {
+    bottom: 8px;
+    right: 8px;
+    border-left: none;
+    border-top: none;
+}
+
+.qr-grid {
+    font-family: monospace;
+    font-size: 1rem;
+    line-height: 1.2;
+    color: var(--color-primary-action);
+    text-align: center;
+    text-shadow: 0 0 10px var(--color-primary-action);
+}
+
+.qr-code-id {
+    font-weight: 700;
+    color: var(--color-primary-action);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px var(--color-primary-action);
+}
+
+/* Profile Section */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border-dim);
+    margin-bottom: var(--space-xl);
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border: 1px solid var(--color-border-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Simple rectangular borders */
+}
+
+.profile-avatar i {
+    width: 40px;
+    height: 40px;
+    color: var(--color-text-muted);
+}
+
+.profile-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    margin-bottom: var(--space-xs);
+}
+
+.profile-rank {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+/* ============================================================
+   SCROLLBAR STYLING (Global Styles)
+   ============================================================ */
+
+/* Webkit Browsers (Chrome, Edge, Safari, Opera) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border-dim);
+    border: 1px solid var(--color-border-dim);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+/* Firefox Fallback */
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    scrollbar-width: thin;
+    /* thumb-color track-color */
+    scrollbar-color: var(--color-border-dim) rgba(0, 0, 0, 0.2);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* ============================================================
+   RESPONSIVE - Mobile (< 768px)
+   ============================================================ */
+
+/* Button standardmÃ¤ÃŸig ausblenden (nur auf Mobile sichtbar) */
+#mobile-menu-toggle {
+    display: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+@media (max-width: 1024px) {
+    .battle-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* --- SIDEBAR LOGIK FÃœR MOBILE --- */
+    
+    /* Sidebar ist jetzt standardmÃ¤ÃŸig "versteckt" (auÃŸerhalb des Bildschirms), aber nicht "weg" */
+    .cogitator-sidebar {
+        display: flex; /* Wieder anzeigen */
+        transform: translateX(-100%); /* Nach links aus dem Bild schieben */
+        transition: transform var(--duration-modal) var(--easing-aggressive);
+        box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        width: 260px; /* Etwas breiter fÃ¼r Touch */
+        z-index: 2000; /* Ãœber allem anderen */
+    }
+
+    /* Wenn die Klasse "active" per JS gesetzt wird, schiebt sie sich rein */
+    .cogitator-sidebar.active {
+        transform: translateX(0);
+    }
+
+    /* Der neue Hamburger-Button */
+    #mobile-menu-toggle {
+        position: fixed;
+        top: var(--space-md);
+        right: var(--space-md);
+        z-index: 1500; /* Ãœber dem Content, aber unter der offenen Sidebar */
+        width: 44px;
+        height: 44px;
+        background: var(--color-bg-void);
+        padding: 0;
+        display: flex; /* Zeigt den Button nur auf Mobile */
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    /* .tactical-bar DELETED */
+
+    .main-content {
+        margin-left: 0;
+        padding: var(--space-lg);
+        padding-bottom: var(--space-lg);
+        padding-top: 60px; /* Platz fÃ¼r den Button oben schaffen */
+    }
+
+    /* Stack grids */
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+
+    .page-header-actions {
+        width: 100%;
+    }
+
+    .page-header-actions .action-button {
+        flex: 1;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    /* Mobile: Button height 44px (Codex 4.1.1), full width */
+    .action-button {
+        width: 100%;
+        height: 44px;
+    }
+
+    /* Toast positioning */
+    .toast-container {
+        left: var(--space-md);
+        right: var(--space-md);
+        bottom: var(--space-xl);
+    }
+
+    .vox-toast {
+        width: 100%;
+    }
+
+    /* Larger touch targets for mobile (Codex 5.2) */
+    .hex-checkbox {
+        width: 28px;
+        height: 28px;
+    }
+
+    .machine-toggle {
+        width: 56px;
+        height: 28px;
+    }
+
+    .machine-toggle-knob {
+        width: 24px;
+        height: 24px;
+    }
+
+    .machine-toggle input:checked+.machine-toggle-knob {
+        left: 30px;
+    }
+}
+
+/* ============================================================
+   PRINT STYLES (Hidden)
+   ============================================================ */
+
+@media print {
+
+    .noise-overlay,
+    .vignette-overlay,
+    .custom-cursor,
+    .cogitator-sidebar,
+    .tactical-bar {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0;
+    }
+}
+
+/* ============================================================
+   LOADING RITUAL - ANIMATION
+   ============================================================ */
+
+/* Container for the specific Codex demo and the global loader */
+.loading-ritual-container,
+.loading-ritual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    width: 100%;
+    min-height: 200px;
+}
+
+.loading-glyph {
+    width: 48px;
+    height: 48px;
+    color: var(--color-primary-action);
+    animation: spin-cog 2s linear infinite;
+    filter: drop-shadow(0 0 5px rgba(57, 255, 20, 0.4));
+}
+
+.segmented-progress {
+    display: flex;
+    gap: 4px;
+    margin-top: var(--space-sm);
+}
+
+.progress-segment {
+    width: 24px;
+    height: 6px;
+    background: var(--color-border-dim);
+    opacity: 0.3;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.loading-text {
+    font-family: var(--font-interface);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--color-text-muted);
+    animation: pulse-text 2s ease-in-out infinite;
+    text-shadow: 0 0 5px rgba(57, 255, 20, 0.2);
+}
+
+/* Animations */
+@keyframes spin-cog {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse-text {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Sequential Fill Animation for Codex Demo */
+/* Cycle 2s matches rotation */
+@keyframes fill-sequence {
+    0% {
+        background: var(--color-border-dim);
+        opacity: 0.3;
+        box-shadow: none;
+    }
+
+    5% {
+        background: var(--color-primary-action);
+        opacity: 1;
+        box-shadow: 0 0 8px var(--color-primary-action);
+    }
+
+    90% {
+        background: var(--color-primary-action);
+        opacity: 1;
+        box-shadow: 0 0 8px var(--color-primary-action);
+    }
+
+    100% {
+        background: var(--color-border-dim);
+        opacity: 0.3;
+        box-shadow: none;
+    }
+}
+
+.loading-ritual-container .progress-segment:nth-child(1) {
+    animation: fill-sequence 2s infinite 0.0s;
+}
+
+.loading-ritual-container .progress-segment:nth-child(2) {
+    animation: fill-sequence 2s infinite 0.2s;
+}
+
+.loading-ritual-container .progress-segment:nth-child(3) {
+    animation: fill-sequence 2s infinite 0.4s;
+}
+
+.loading-ritual-container .progress-segment:nth-child(4) {
+    animation: fill-sequence 2s infinite 0.6s;
+}
+
+.loading-ritual-container .progress-segment:nth-child(5) {
+    animation: fill-sequence 2s infinite 0.8s;
+}
+
+/* ============================================================
+   THE ASSEMBLY - Phase Flow UI
+   ============================================================ */
+
+/* Phase Indicator Bar */
+.assembly-phase-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: var(--space-xl);
+    padding: var(--space-lg);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-border-dim);
+    overflow-x: auto;
+}
+
+.phase-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    min-width: 100px;
+}
+
+.phase-dot {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--color-border-dim);
+    background: var(--color-bg-void);
+    transition: all var(--duration-snap) var(--easing-mechanical);
+}
+
+.phase-step.completed .phase-dot,
+.phase-step.active .phase-dot {
+    border-color: var(--color-primary-action);
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.phase-step.active .phase-dot {
+    animation: phase-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes phase-pulse {
+    0%, 100% {
+        box-shadow: var(--shadow-glow-primary);
+    }
+    50% {
+        box-shadow: var(--shadow-glow-primary-intense);
+    }
+}
+
+.phase-label {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.phase-step.completed .phase-label,
+.phase-step.active .phase-label {
+    color: var(--color-primary-action);
+}
+
+.phase-connector {
+    width: 40px;
+    height: 2px;
+    background: var(--color-border-dim);
+    flex-shrink: 0;
+}
+
+.phase-step.completed + .phase-connector {
+    background: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+/* Phase Content Containers */
+.assembly-phase {
+    display: none;
+}
+
+.assembly-phase.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Role Selection Cards */
+.assembly-role-card {
+    transition: all var(--duration-snap) var(--easing-mechanical);
+}
+
+.assembly-role-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.assembly-role-card.selected {
+    border-color: var(--color-primary-action);
+    box-shadow: var(--shadow-glow-primary-intense);
+}
+
+.assembly-role-card.selected i {
+    color: var(--color-primary-action) !important;
+}
+
+/* BEGIN BATTLE Pulsing Button */
+.assembly-begin-battle {
+    font-size: 1.2rem;
+    padding: var(--space-lg) var(--space-2xl);
+    height: auto;
+    min-width: 200px;
+}
+
+.assembly-begin-battle:not(:disabled) {
+    animation: battle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes battle-pulse {
+    0%, 100% {
+        box-shadow: var(--shadow-glow-primary);
+    }
+    50% {
+        box-shadow: var(--shadow-glow-primary-intense), 0 0 40px rgba(57, 255, 20, 0.3);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .assembly-phase-indicator {
+        justify-content: flex-start;
+        padding: var(--space-md);
+    }
+    
+    .phase-step {
+        min-width: 80px;
+    }
+    
+    .phase-label {
+        font-size: 0.6rem;
+    }
+    
+    .phase-connector {
+        width: 20px;
+    }
 }

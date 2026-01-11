@@ -1,15 +1,44 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const cinzel = localFont({
+  src: [
+    {
+      path: "../fonts/cinzel/Cinzel-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/cinzel/Cinzel-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../fonts/cinzel/Cinzel-Black.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-display",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const rajdhani = localFont({
+  src: [
+    {
+      path: "../fonts/rajdhani/Rajdhani-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../fonts/rajdhani/Rajdhani-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-interface",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -44,7 +73,7 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
   openGraph: {
     type: "website",
-    locale: "de_DE",
+    locale: "en_US",
     url: "https://warlogs.de",
     siteName: "WarLogs",
     title: "WarLogs - Tabletop Campaign Management",
@@ -63,8 +92,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body className={`${cinzel.variable} ${rajdhani.variable}`}>
+        <div className="scanline-effect" />
+        <div className="app-wrapper">
+          {children}
+        </div>
       </body>
     </html>
   );
