@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardBody } from '@/components/ui/Card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/Card';
 import { StatusLight } from '@/components/ui/StatusLight';
 import { Value } from '@/components/ui/Value';
 import { Button } from '@/components/ui/Button';
@@ -47,7 +47,14 @@ export default function DesignCodex() {
     }
     const [toasts, setToasts] = useState<Toast[]>([]);
 
-    const addToast = (type: 'success' | 'error' | 'info') => {
+    const removeToast = useCallback((id: number) => {
+        setToasts((prev) => prev.map(t => t.id === id ? { ...t, exiting: true } : t));
+        setTimeout(() => {
+            setToasts((prev) => prev.filter((t) => t.id !== id));
+        }, 300); // Wait for exit animation
+    }, []);
+
+    const addToast = useCallback((type: 'success' | 'error' | 'info') => {
         const id = Date.now();
         const newToast: Toast = {
             id,
@@ -61,14 +68,7 @@ export default function DesignCodex() {
         setTimeout(() => {
             removeToast(id);
         }, 5000);
-    };
-
-    const removeToast = (id: number) => {
-        setToasts((prev) => prev.map(t => t.id === id ? { ...t, exiting: true } : t));
-        setTimeout(() => {
-            setToasts((prev) => prev.filter((t) => t.id !== id));
-        }, 300); // Wait for exit animation
-    };
+    }, [removeToast]);
     const triggerGlitch = () => {
         setIsGlitching(true);
         setTimeout(() => setIsGlitching(false), 200);
@@ -250,7 +250,7 @@ export default function DesignCodex() {
                     {/* Documentation */}
                     <div className="codex-description">
                         <h4>Immersion Layers</h4>
-                        <p>Visual interference layers used to create a "tactical display" feel.</p>
+                        <p>Visual interference layers used to create a &quot;tactical display&quot; feel.</p>
                         <ul style={{ paddingLeft: '20px', listStyle: 'square', color: 'var(--color-text-muted)', marginBottom: 'var(--space-md)' }}>
                             <li><strong>Scanlines:</strong> 2px repeating gradient on a 4px cycle.</li>
                             <li><strong>Physical Flicker:</strong> Subtle opacity modulation (0.97 - 1.0) for CRT-like interaction.</li>
@@ -421,7 +421,7 @@ export default function DesignCodex() {
                     {/* Documentation */}
                     <div className="codex-description">
                         <h4>Data Entry</h4>
-                        <p>Box-style text inputs with chamfered appearance. Labels are absolutely positioned to sit on the top border.</p>
+                        <p>&quot;Box-style&quot; text inputs with &quot;chamfered appearance&quot;. Labels are absolutely positioned to sit on the top border.</p>
                         <ul style={{ paddingLeft: '20px', listStyle: 'square', color: 'var(--color-text-muted)', marginBottom: 'var(--space-md)' }}>
                             <li><strong>Focus:</strong> Green border + Primary Glow.</li>
                             <li><strong>Error:</strong> Red border + Glitch animation on validation failure.</li>
@@ -651,7 +651,7 @@ export default function DesignCodex() {
                     {/* Documentation */}
                     <div className="codex-description">
                         <h4>Contextual Info</h4>
-                        <p>Pure CSS tooltips via <code>data-tooltip</code> attribute.</p>
+                        <p>Pure CSS tooltips via <code>data-tooltip</code> attribute for &quot;Contextual Info&quot;.</p>
                         <ul style={{ paddingLeft: '20px', listStyle: 'square', color: 'var(--color-text-muted)', marginBottom: 'var(--space-md)' }}>
                             <li><strong>Behavior:</strong> Appears centered above element on hover.</li>
                             <li><strong>Styling:</strong> Unified card border style with shadow.</li>
@@ -714,7 +714,7 @@ export default function DesignCodex() {
                     {/* Documentation */}
                     <div className="codex-description">
                         <h4>Focused Interaction Layer</h4>
-                        <p>Overlay <code>.data-slate</code> for critical tasks that require focus.</p>
+                        <p>Overlay <code>.data-slate</code> for &quot;Focused Interaction Layer&quot; tasks.</p>
                         <ul style={{ paddingLeft: '20px', listStyle: 'square', color: 'var(--color-text-muted)', marginBottom: 'var(--space-md)' }}>
                             <li><strong>Backdrop:</strong> <code>.modal-backdrop</code> applies dimming and blur to the background.</li>
                             <li><strong>Container:</strong> <code>.data-slate</code> centers content and handles scrolling.</li>

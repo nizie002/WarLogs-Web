@@ -158,28 +158,20 @@ npm start
 
 # Run linting
 npm run lint
-
-# Run type checking
-npm run type-check
 ```
 
 ---
 
 ## 📁 Project Structure
 
-*Documentation pending — will be updated as the project structure is finalized.*
-
----
-
-## 🌐 Domain & Routing
-
-*Documentation pending — routing structure will be documented once implemented.*
-
----
-
-## 🔌 API Integration
-
-*Documentation pending — API integration details will be added once the backend is connected.*
+| Directory | Purpose |
+|-----------|---------|
+| `src/app/` | Next.js App Router pages and layouts |
+| `src/components/` | React components (ui, data, feedback) |
+| `src/hooks/` | Custom React hooks (logic & state) |
+| `src/lib/` | Utility functions and core logic |
+| `src/types/` | Shared TypeScript interfaces and types |
+| `public/` | Static assets (favicons, images, models) |
 
 ---
 
@@ -247,24 +239,6 @@ git pull origin main
 
 # Rebuild and restart
 docker compose up --build -d
-```
-
----
-
-## 🧪 Testing
-
-```bash
-# Run unit tests
-npm run test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run E2E tests
-npm run test:e2e
-
-# Generate coverage report
-npm run test:coverage
 ```
 
 ---

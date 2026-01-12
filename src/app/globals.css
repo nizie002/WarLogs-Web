@@ -1,18 +1,59 @@
-/* ============================================================
-   WARLOGS DESIGN CODEX - DEFINITIVE IMPLEMENTATION (v6)
-   The Unified Component Architecture
-   ============================================================
-   
-   This stylesheet implements the complete WarLogs Design System,
-   featuring a consolidated, token-based component architecture:
-   
-   - Unified Card System (Flexible containers)
-   - Unified Value & Label Systems (Standardized data display)
-   - Atmospheric Overlays (Noise, scanning effects)
-   - High-Fidelity Interaction Design (Glows, glitch transitions)
-   - Mobile-First Responsive Navigation (Sidebar + Tactical Bar)
-   
-   ============================================================ */
+/* ================================================================
+   ██╗    ██╗ █████╗ ██████╗ ██╗      ██████╗  ██████╗ ███████╗
+   ██║    ██║██╔══██╗██╔══██╗██║     ██╔═══██╗██╔════╝ ██╔════╝
+   ██║ █╗ ██║███████║██████╔╝██║     ██║   ██║██║  ███╗███████╗
+   ██║███╗██║██╔══██║██╔══██╗██║     ██║   ██║██║   ██║╚════██║
+   ╚███╔███╔╝██║  ██║██║  ██║███████╗╚██████╔╝╚██████╔╝███████║
+    ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝ ╚═════╝  ╚═════╝ ╚══════╝
+   ================================================================
+   DESIGN CODEX — AUTHORITATIVE STYLESHEET (v7)
+   "The Unified Component Architecture"
+   ================================================================
+
+   TABLE OF CONTENTS
+   ─────────────────────────────────────────────────────────────────
+   1.  DESIGN TOKENS ........................... (Line ~55)
+       └── Colors, Spacing, Shadows, Timing, Typography
+
+   2.  GLOBAL STYLES & RESETS .................. (Line ~100)
+       └── Box Model, Body Defaults, Scrollbars
+
+   3.  ATMOSPHERIC EFFECTS ..................... (Line ~160)
+       └── Scanlines, Flicker, Sweep-Glitch, Tear Animations
+
+   4.  CARD SYSTEM ............................. (Line ~320)
+       └── Variants (Subtle, Standard, Accent), Surfaces (Solid, Glass)
+
+   5.  CORE UI COMPONENTS ...................... (Line ~900)
+       ├── 5.1 Buttons (action-button)
+       ├── 5.2 Inputs (cogitator-input)
+       ├── 5.3 Status Indicators (status-light, status-badge)
+       └── 5.4 Values & Labels
+
+   6.  NAVIGATION .............................. (Line ~700)
+       └── Sidebar, Menu Items
+
+   7.  DATA DISPLAY ............................ (Line ~1200)
+       └── Manifests, Tables, Log Entries
+
+   8.  FEEDBACK COMPONENTS ..................... (Line ~1400)
+       └── Modals (data-slate), Toasts (vox-toast)
+
+   9.  INTERACTIVE CONTROLS .................... (Line ~3580)
+       └── HexCheckbox, MachineToggle, CogitatorSelect
+
+   10. PAGE LAYOUTS ............................ (Line ~2500)
+       └── Headers, Grids, Main Content Area
+
+   11. RESPONSIVE BREAKPOINTS .................. (Line ~2900)
+       └── Tablet (<1024px), Mobile (<768px)
+
+   ─────────────────────────────────────────────────────────────────
+   IMPORTANT: This is the SINGLE SOURCE OF TRUTH for all styles.
+   Do NOT create component-level CSS files. All modifications
+   should be made within the appropriate section of THIS file.
+   ================================================================ */
+
 
 /* ============================================================
    1. DESIGN TOKENS (Codex Section 1.2)
@@ -893,7 +934,8 @@ textarea:focus-visible,
 }
 
 /* ============================================================
-   4.1.1 ACTION BUTTON (Codex Section 4.1.1)
+   5.1 BUTTONS (action-button)
+   Primary, Secondary, Danger | Sizes: sm, md, lg
    ============================================================ */
 
 .action-button {
@@ -1018,8 +1060,8 @@ textarea:focus-visible,
 
 
 /* ============================================================
-   4.1.2 COGITATOR INPUT (Codex Section 4.1.2)
-   BOX-STYLE with absolute-positioned labels
+   5.2 INPUTS (cogitator-input)
+   Box-style with absolute-positioned labels
    ============================================================ */
 
 .cogitator-input-wrapper {
@@ -3311,97 +3353,12 @@ select.cogitator-input option {
 }
 
 /* ============================================================
-   5. ACTION BUTTONS (Codex Section 3.1)
+   [TOMBSTONE] ACTION BUTTONS (MOVED TO SECTION 5.1 @ ~Line 940)
+   ============================================================
+   This duplicate block was removed during the v7 consolidation.
+   All button styles are now defined in the Core UI Components
+   section. Do not add button styles here.
    ============================================================ */
-
-.action-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-xs);
-    padding: var(--space-sm) var(--space-lg);
-    background: transparent;
-    border: 1px solid var(--color-primary-action);
-    color: var(--color-primary-action);
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    transition: all var(--duration-snap) var(--easing-mechanical);
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.action-button:hover:not(:disabled) {
-    background: rgba(57, 255, 20, 0.1);
-    box-shadow: var(--shadow-glow-primary);
-    transform: translateY(-1px);
-}
-
-.action-button:active:not(:disabled) {
-    background: var(--color-primary-action);
-    color: var(--color-bg-void);
-    animation: lightning-flash 0.3s var(--easing-mechanical);
-    transform: translateY(1px);
-}
-
-.action-button:disabled {
-    border-color: var(--color-border-dim);
-    color: var(--color-text-muted);
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-/* Secondary Variant */
-.action-button.secondary {
-    border-color: var(--color-border-dim);
-    color: var(--color-text-primary);
-}
-
-.action-button.secondary:hover:not(:disabled) {
-    background: rgba(227, 218, 201, 0.05);
-    border-color: var(--color-text-primary);
-    box-shadow: 0 0 10px rgba(227, 218, 201, 0.2);
-}
-
-.action-button.secondary:active:not(:disabled) {
-    background: var(--color-text-primary);
-    color: var(--color-bg-void);
-}
-
-/* Danger Variant */
-.action-button.danger {
-    border-color: var(--color-primary-alert);
-    color: var(--color-primary-alert);
-}
-
-.action-button.danger:hover:not(:disabled) {
-    background: rgba(239, 68, 68, 0.1);
-    box-shadow: var(--shadow-glow-alert);
-}
-
-.action-button.danger:active:not(:disabled) {
-    background: var(--color-primary-alert);
-    color: var(--color-bg-void);
-}
-
-@keyframes lightning-flash {
-    0% {
-        filter: brightness(1);
-    }
-
-    50% {
-        filter: brightness(3) contrast(2);
-    }
-
-    100% {
-        filter: brightness(1);
-    }
-}
 
 /* Responsive adjustments */
 

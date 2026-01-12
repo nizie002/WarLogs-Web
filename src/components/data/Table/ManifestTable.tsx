@@ -9,7 +9,7 @@ import { ReactNode } from 'react';
 export interface Column<T> {
   key: string;
   label: string;
-  render?: (value: any, row: T) => ReactNode;
+  render?: (value: unknown, row: T) => ReactNode;
 }
 
 export interface ManifestTableProps<T> {
@@ -18,7 +18,7 @@ export interface ManifestTableProps<T> {
   onRowClick?: (row: T) => void;
 }
 
-export function ManifestTable<T extends Record<string, any>>({
+export function ManifestTable<T extends Record<string, unknown>>({
   columns,
   data,
   onRowClick,
@@ -46,7 +46,7 @@ export function ManifestTable<T extends Record<string, any>>({
               <td key={column.key} className="manifest-cell">
                 {column.render
                   ? column.render(row[column.key], row)
-                  : row[column.key]}
+                  : (row[column.key] as ReactNode)}
               </td>
             ))}
           </tr>

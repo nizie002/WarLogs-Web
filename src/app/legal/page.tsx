@@ -8,16 +8,18 @@ export default function LegalPage() {
         <div className="page-glitch" style={{ flex: 1, padding: 'var(--space-2xl)', display: 'flex', flexDirection: 'column', overflow: 'auto', gap: 'var(--space-2xl)' }}>
 
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', letterSpacing: '0.1em', color: 'var(--color-primary-action)' }}>
-                    WARLOGS // LEGAL
+            <header className="page-header">
+                <div className="page-header-info">
+                    <h1>WARLOGS // LEGAL</h1>
                 </div>
-                <Link href="/" style={{ textDecoration: 'none' }}>
-                    <Button variant="outline" icon={<span style={{ display: 'flex' }}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span>}>
-                        RETURN TO UPLINK
-                    </Button>
-                </Link>
-            </div>
+                <div className="page-header-actions">
+                    <Link href="/" style={{ textDecoration: 'none' }}>
+                        <Button variant="secondary" icon={<span style={{ display: 'flex' }}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span>}>
+                            RETURN TO UPLINK
+                        </Button>
+                    </Link>
+                </div>
+            </header>
 
             {/* Impressum Section */}
             <section className="card card--subtle card--solid">

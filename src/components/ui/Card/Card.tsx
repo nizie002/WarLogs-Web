@@ -5,6 +5,7 @@
  * Extension and bugfixes only. See README.md for the locking policy.
  */
 import { HTMLAttributes, ReactNode } from 'react';
+import { cn } from '@/lib/cn';
 
 /**
  * Props for the Card component
@@ -28,7 +29,7 @@ export function Card({
   className = '',
   ...props
 }: CardProps) {
-  const classes = `card card--${variant} card--${surface} ${className}`.trim();
+  const classes = cn('card', `card--${variant}`, `card--${surface}`, className);
 
   return (
     <div className={classes} {...props}>
@@ -55,7 +56,7 @@ export function CardHeader({
   centered,
   ...props
 }: CardHeaderProps) {
-  const classes = `card__header ${centered ? 'card__header--centered' : ''} ${className}`.trim();
+  const classes = cn('card__header', centered && 'card__header--centered', className);
 
   return (
     <div className={classes} {...props}>
@@ -70,7 +71,7 @@ export function CardBody({
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`card__body ${className}`.trim()} {...props}>
+    <div className={cn('card__body', className)} {...props}>
       {children}
     </div>
   );
@@ -82,7 +83,7 @@ export function CardTitle({
   ...props
 }: HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3 className={`card__title ${className}`.trim()} {...props}>
+    <h3 className={cn('card__title', className)} {...props}>
       {children}
     </h3>
   );
@@ -94,7 +95,7 @@ export function CardSubtitle({
   ...props
 }: HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p className={`card__subtitle ${className}`.trim()} {...props}>
+    <p className={cn('card__subtitle', className)} {...props}>
       {children}
     </p>
   );

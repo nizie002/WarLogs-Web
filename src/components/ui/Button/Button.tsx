@@ -5,6 +5,7 @@
  * Extension and bugfixes only. See README.md for the locking policy.
  */
 import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { cn } from '@/lib/cn';
 
 /**
  * Props for the Button component
@@ -37,9 +38,12 @@ export function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const variantClass = variant === 'primary' ? '' : variant;
-  const sizeClass = size === 'md' ? '' : size;
-  const classes = `action-button ${variantClass} ${sizeClass} ${className}`.trim();
+  const classes = cn(
+    'action-button',
+    variant !== 'primary' && variant,
+    size !== 'md' && size,
+    className
+  );
 
   return (
     <button className={classes} {...props}>

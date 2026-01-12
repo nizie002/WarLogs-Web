@@ -6,7 +6,7 @@
  */
 'use client';
 
-import { ReactNode } from 'react';
+import { } from 'react';
 
 export interface ToastProps {
   id: string;

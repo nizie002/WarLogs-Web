@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { HexCheckbox } from '@/components/ui/HexCheckbox';
 import { MachineToggle } from '@/components/ui/MachineToggle';
-import { Card, CardHeader, CardBody, CardTitle, CardSubtitle } from '@/components/ui/Card';
+import { Card, CardBody, CardTitle } from '@/components/ui/Card';
 import { StatusLight } from '@/components/ui/StatusLight';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Value } from '@/components/ui/Value';
@@ -77,7 +77,7 @@ export default function CodexPage() {
           </div>
           <div className="codex-description">
             <h4>Color System</h4>
-            <p>High-contrast "Grim Dark" aesthetic with neon green accents.</p>
+            <p>High-contrast &quot;Grim Dark&quot; aesthetic with neon green accents.</p>
           </div>
         </div>
       </div>
