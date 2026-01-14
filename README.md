@@ -2,11 +2,6 @@
 
 > The web frontend for WarLogs – A self-hosted platform for tabletop campaign management.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-Private-red)]()
-
 ---
 
 ## 📖 Overview
@@ -17,8 +12,8 @@ This repository is part of the larger **WarLogs Project** ecosystem:
 
 | Component | Repository | Purpose |
 |-----------|------------|---------|
-| **Web Frontend** | `WarLogs-Web` *(this repo)* | Desktop & tablet interface |
-| **Mobile App** | `WarLogs-App` | Tabletop companion (React Native/Expo) |
+| **Web Frontend** | `WarLogs-Web` *(this repo)* | Mobile & tablet & desktop interface |
+| **Mobile App** | `WarLogs-App` | Tabletop android app companion |
 | **Backend API** | `WarLogs-API` | REST API & business logic (Python/Flask) |
 | **Database** | PostgreSQL | Data persistence |
 
@@ -28,14 +23,23 @@ This repository is part of the larger **WarLogs Project** ecosystem:
 
 The Strategium handles:
 
-- **📊 The Archives** — Full battle history, statistics, and campaign chronicles
-- **👤 Player Profiles** — Faction management, army lists, win/loss records
-- **🏆 Leaderboards** — Global and campaign-specific rankings
-- **⚙️ Administration** — Campaign setup, user management, settings
-- **📸 Gallery** — Battle photos and memorable moments
-- **📈 Analytics** — Detailed statistics and performance insights
+- **👤 Player Profiles** — Names, army lists sorted by game mode
+- **👥 Army List Importer** — Import army lists from NewRecruits JSON export
+- **🎮 Game Session Guidance** — Host creates a lobby (mode, points, players), then guides all participants through setup and gameplay phases
 
-> **Note:** Live scoring during games is primarily handled by the mobile app (*"The Auspex"*). The web frontend provides a spectator view and post-game analysis.
+---
+
+## 🔐 Authentication
+
+**Private group only** — no public registration. Users are pre-configured in a backend JSON file:
+
+```json
+{ "id": "tim", "name": "Tim", "pin": "7734", "avatar": "/avatars/tim.png" }
+```
+
+**Login:** Select name → Enter PIN → Done.
+
+**Session:** On successful login, an HTTP-only cookie (`userId`) is set. Protected routes check this cookie to identify the user.
 
 ---
 
@@ -64,11 +68,10 @@ The application is designed with a mobile-first approach, progressively enhancin
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| [Next.js](https://nextjs.org/) | 15.x | React framework with App Router |
+| [Next.js](https://nextjs.org/) | 16.x | React framework with App Router |
 | [React](https://react.dev/) | 19.x | UI library |
 | [TypeScript](https://www.typescriptlang.org/) | 5.x | Type safety |
-| CSS Modules / Vanilla CSS | — | Styling (no Tailwind) |
-| [SWR](https://swr.vercel.app/) | — | Data fetching & caching |
+| Vanilla CSS | — | Styling (no Tailwind) |
 
 ---
 
@@ -164,14 +167,121 @@ npm run lint
 
 ## 📁 Project Structure
 
-| Directory | Purpose |
-|-----------|---------|
-| `src/app/` | Next.js App Router pages and layouts |
-| `src/components/` | React components (ui, data, feedback) |
-| `src/hooks/` | Custom React hooks (logic & state) |
-| `src/lib/` | Utility functions and core logic |
-| `src/types/` | Shared TypeScript interfaces and types |
-| `public/` | Static assets (favicons, images, models) |
+```
+src/
+├── app/
+│   │
+│   ├── (public)/               # 🌐 UNAUTHENTICATED
+│   │   ├── page.tsx            # Landing → login
+│   │   └── legal/
+│   │
+│   ├── (app)/                  # 🔐 AUTHENTICATED
+│   │   ├── layout.tsx          # Minimal header: avatar+name (top-right)
+│   │   ├── page.tsx            # Dashboard: [Manage Lists] [Host] [Join]
+│   │   │
+│   │   ├── join/               # Join a game
+│   │   │   └── page.tsx        # QR scan, code input, open lobbies list
+│   │   │
+│   │   ├── host/               # Host a game
+│   │   │   └── page.tsx        # Mode selection, points → create lobby
+│   │   │
+│   │   ├── lists/              # Army list management
+│   │   │   ├── page.tsx        # All lists overview
+│   │   │   ├── import/         # Upload JSON (NewRecruits/Battlescribe)
+│   │   │   └── [listId]/       # View/edit single list
+│   │   │
+│   │   └── account/            # Profile settings (via avatar click)
+│   │       └── page.tsx        # Edit name, avatar
+│   │
+│   ├── (game)/                 # 🎮 ACTIVE GAME SESSION
+│   │   └── [sessionId]/
+│   │       ├── lobby/          # Waiting room (QR/code, player list)
+│   │       ├── matched/        # → modes/matched-play-*
+│   │       ├── crusade/        # → modes/crusade-*
+│   │       └── open/           # → modes/open-play
+│   │
+│   ├── api/                    # 🔌 API ROUTES (proxy to backend)
+│   │   ├── auth/               # Login, logout, session check
+│   │   ├── lists/              # CRUD for army lists
+│   │   └── sessions/           # Game session management
+│   │
+│   └── globals.css
+│
+├── modes/                      # 🔒 ISOLATED GAME MODE MODULES
+│   ├── matched-play-*/         # Competitive (Chapter Approved rules)
+│   ├── crusade-*/              # Campaign narrative (e.g. Forsarrwar)
+│   └── open-play/              # Casual games
+│
+├── components/                 # Global UI only (Button, Card, etc.)
+├── hooks/                      # Global hooks only (useToast, etc.)
+├── lib/
+│   └── parsers/                # JSON parsers for list import
+├── types/
+│
+└── public/                     # 📦 STATIC ASSETS
+    ├── avatars/                # Player avatar images
+    └── icons/                  # UI icons
+```
+
+### 🚀 User Flow
+
+After login, the **Dashboard** presents three prominent mobile-friendly actions (no sidebar):
+
+```
+┌────────────────────────────────┐
+│           [👤 Name]            │
+├────────────────────────────────┤
+│                                │
+│  ┌──────────────────────────┐  │
+│  │      MANAGE LISTS        │  │
+│  └──────────────────────────┘  │
+│                                │
+│  ┌──────────────────────────┐  │
+│  │      HOST A GAME         │  │
+│  └──────────────────────────┘  │
+│                                │
+│  ┌──────────────────────────┐  │
+│  │      JOIN A GAME         │  │
+│  └──────────────────────────┘  │
+│                                │
+└────────────────────────────────┘
+```
+
+#### Flow 1: Join a Game (`/join`)
+- Scan **QR Code** (quickest)
+- Enter **Session Code** manually
+- Browse **Open Lobbies** (mode, points, player count)
+- → Joins `/game/[sessionId]/lobby`
+
+#### Flow 2: Host a Game (`/host`)
+- Select **Game Mode** (Crusade / Matched Play / Open)
+- Set **Max Points** per team
+- → Creates session → redirects to `/game/[sessionId]/lobby`
+
+#### Flow 3: Manage Lists (`/lists`)
+- View all saved army lists (name, faction, points)
+- **Import**: Upload JSON from NewRecruits/Battlescribe → parse → preview → save
+- **Edit/Delete**: Manage individual lists
+- Lists tagged with: `name`, `faction`, `army`, `points`, `source`
+
+### 🎮 Game Mode Module Architecture
+
+Each game mode is **100% self-contained**:
+
+```
+modes/matched-play-chapter-approved-2025/
+├── assets/           # Mode-specific images, icons
+├── components/       # Mode-specific UI components
+├── hooks/            # Mode-specific logic & state
+├── utils/            # Mode-specific helpers
+├── types.ts          # Mode-specific types
+└── index.ts          # Public exports
+```
+
+**Key principles:**
+- **Isolation:** Modes never import from each other
+- **Global shared code:** Only generic components live in `src/components/` and `src/hooks/`
+- **Route delegation:** App Router pages simply import and render the appropriate mode module
 
 ---
 
@@ -179,17 +289,48 @@ npm run lint
 
 The UI follows the **"Grimdark Modern"** aesthetic: high-contrast, tactical, and atmospheric. It simulates a futuristic military interface ("The Strategium") with neon accents against a deep void.
 
+All styles are defined in a single authoritative stylesheet: `src/app/globals.css`.
+
 ### 💎 Design Tokens
+
+#### Colors
 
 | Token | Value | Purpose |
 |-------|-------|---------|
 | `--color-bg-void` | `#0a0a0a` | Deepest background layer |
-| `--color-bg-surface` | `#1a1c1e` | Component surface / cards |
-| `--color-primary-action` | `#39ff14` | Neon Green / Success / Actions |
+| `--color-bg-surface` | `#1a1c1e` | Component surfaces / cards |
+| `--color-border-dim` | `#2d3032` | Subtle borders |
+| `--color-text-primary` | `#e3dac9` | Parchment White / Primary text |
+| `--color-text-muted` | `#9CA3AF` | Secondary / muted text |
+| `--color-primary-action` | `#39ff14` | Neon Green / Success / CTA |
 | `--color-primary-alert` | `#ef4444` | Red / Danger / Errors |
-| `--color-text-primary` | `#e3dac9` | Parchment White / Primary Text |
-| `--font-display` | `Cinzel` | Ritualistic & Heading Typography |
-| `--font-interface` | `Rajdhani` | Technical & Data Typography |
+
+#### Typography
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--font-display` | `Cinzel` | Headings, ritualistic titles |
+| `--font-interface` | `Rajdhani` | Data, UI labels, body text |
+
+#### Spacing Scale
+
+| Token | Value |
+|-------|-------|
+| `--space-xs` | `8px` |
+| `--space-sm` | `12px` |
+| `--space-md` | `16px` |
+| `--space-lg` | `24px` |
+| `--space-xl` | `32px` |
+| `--space-2xl` | `48px` |
+
+#### Motion & Effects
+
+| Token | Value | Purpose |
+|-------|-------|---------|
+| `--duration-snap` | `150ms` | Quick interactions |
+| `--duration-modal` | `300ms` | Modal transitions |
+| `--easing-mechanical` | `linear` | Machine-like precision |
+| `--shadow-glow-primary` | `0 0 10px #39ff14` | Neon glow effect |
 
 ### 🔒 Component Locking Policy
 
@@ -202,12 +343,12 @@ The UI follows the **"Grimdark Modern"** aesthetic: high-contrast, tactical, and
 
 ### 📦 Component Library
 
-| Category | Components |
-|----------|------------|
-| **UI Primitives** | Button, Card, Input, Label, Value, StatusBadge, StatusLight |
-| **Interactive** | HexCheckbox, MachineToggle, CogitatorSelect |
-| **Feedback** | LoadingRitual, Modal, Toast |
-| **Data Layouts** | Table, LogEntry |
+| Category | Components | Path |
+|----------|------------|------|
+| **UI Primitives** | Button, Card, Input, Label, Value, StatusBadge, StatusLight | `src/components/ui/` |
+| **Interactive Controls** | HexCheckbox, MachineToggle, CogitatorSelect | `src/components/ui/` |
+| **Feedback** | LoadingRitual, Modal, Toast | `src/components/feedback/` |
+| **Data Display** | Table, LogEntry | `src/components/data/` |
 
 ---
 
