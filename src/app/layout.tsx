@@ -91,7 +91,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${cinzel.variable} ${rajdhani.variable}`}>
         <div className="scanline-effect" />
         {children}
