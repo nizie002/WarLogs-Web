@@ -94,9 +94,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${cinzel.variable} ${rajdhani.variable}`}>
         <div className="scanline-effect" />
-        <div className="app-wrapper">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );

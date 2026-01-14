@@ -1,23 +1,48 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardBody } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { LoadingRitual } from '@/components/feedback/LoadingRitual';
 
 export default function Home() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInitialize = () => {
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+
+    // ============================================================
+    // TODO: AUTHENTICATION IMPLEMENTATION
+    // ============================================================
+    // 1. Get selected user ID and PIN from form inputs
+    // 2. POST to /api/auth with { userId, pin }
+    // 3. Backend validates credentials against users.json
+    // 4. On success: backend sets HTTP-only session cookie
+    // 5. On failure: show error message and reset loading state
+    // ============================================================
+
+    // MOCK: Simulate authentication + minimum loading time (4 seconds)
+    // In production, use Promise.all with actual auth call
+    setTimeout(() => {
+      // After loading ritual completes, navigate to dashboard
+      router.push('/dashboard');
+    }, 4000);
   };
 
-  return (
-    <div className="app-wrapper" style={{ flexDirection: 'column', height: '100vh', justifyContent: 'center', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+  // Show loading ritual if authenticating
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'center', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+        <LoadingRitual message="AUTHENTICATING OPERATIVE..." visible={true} />
+      </div>
+    );
+  }
 
-      {/* Background Effects */}
-      <div className="scanline-effect" />
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'center', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
 
       {/* Header */}
       <header style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: 'var(--space-lg)', borderBottom: '1px solid var(--color-border-dim)', background: 'rgba(10, 10, 10, 0.8)', backdropFilter: 'blur(10px)', zIndex: 10 }}>
@@ -49,7 +74,7 @@ export default function Home() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)', marginTop: 'var(--space-md)' }}>
                 <Button variant="primary" onClick={handleInitialize} disabled={isLoading}>
-                  {isLoading ? 'INITIALIZING...' : 'INITIALIZE UPLINK'}
+                  INITIALIZE UPLINK
                 </Button>
 
                 <div style={{ display: 'flex', justifySelf: 'center', margin: '0 auto', width: '100%' }}>
@@ -80,3 +105,4 @@ export default function Home() {
     </div>
   );
 }
+
