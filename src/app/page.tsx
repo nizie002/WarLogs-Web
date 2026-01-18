@@ -68,9 +68,9 @@ export default function Home() {
       {/* Footer */}
       <footer style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 'var(--space-lg)', textAlign: 'center', zIndex: 10 }}>
         <div style={{ display: 'flex', gap: 'var(--space-lg)', justifyContent: 'center', fontSize: '0.75rem', color: 'var(--color-text-muted)', letterSpacing: '0.05em' }}>
-          <Link href="/legal" style={{ color: 'inherit', textDecoration: 'none' }}>IMPRESSUM</Link>
+          <Link href="/legal#impressum" style={{ color: 'inherit', textDecoration: 'none' }}>IMPRESSUM</Link>
           <span>|</span>
-          <Link href="/legal" style={{ color: 'inherit', textDecoration: 'none' }}>DATENSCHUTZERKLÄRUNG</Link>
+          <Link href="/legal#datenschutz" style={{ color: 'inherit', textDecoration: 'none' }}>DATENSCHUTZERKLÄRUNG</Link>
         </div>
         <div style={{ marginTop: 'var(--space-xs)', fontSize: '0.65rem', color: '#333' }}>
           WARLOGS SYSTEM VERSION 0.9.2

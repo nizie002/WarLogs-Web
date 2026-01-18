@@ -4,6 +4,31 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
 export default function LegalPage() {
+    const { impressum, privacy, footerVersion } = legalContent;
+
+    useEffect(() => {
+        const scrollToHash = () => {
+            if (typeof window === 'undefined') {
+                return;
+            }
+
+            const hash = window.location.hash.replace('#', '');
+            if (!hash) {
+                return;
+            }
+
+            const target = document.getElementById(hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+
+        scrollToHash();
+        window.addEventListener('hashchange', scrollToHash);
+
+        return () => window.removeEventListener('hashchange', scrollToHash);
+    }, []);
+
     return (
         <div className="page-glitch" style={{ flex: 1, padding: 'var(--space-2xl)', display: 'flex', flexDirection: 'column', overflow: 'auto', gap: 'var(--space-2xl)' }}>
 
