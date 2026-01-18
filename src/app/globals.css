@@ -1026,6 +1026,14 @@ textarea:focus-visible,
 }
 
 .action-button.danger:hover {
+    background: rgba(239, 68, 68, 0.08);
+    box-shadow: var(--shadow-glow-alert);
+}
+
+.action-button.danger:active {
+    background: var(--color-primary-alert);
+    border-color: var(--color-primary-alert);
+    color: var(--color-bg-void);
     box-shadow: var(--shadow-glow-alert);
 }
 
@@ -1056,6 +1064,12 @@ textarea:focus-visible,
     background: rgba(227, 218, 201, 0.1);
     border-color: var(--color-text-primary);
     box-shadow: 0 0 10px rgba(227, 218, 201, 0.2);
+}
+
+.action-button.danger.is-active {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: var(--color-primary-alert);
+    box-shadow: var(--shadow-glow-alert);
 }
 
 
