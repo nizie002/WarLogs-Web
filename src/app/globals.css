@@ -128,6 +128,11 @@ body {
     line-height: 1.6;
 }
 
+/* Anchor scroll offset for legal sections */
+#datenschutz {
+    scroll-margin-top: calc(var(--space-2xl) + var(--space-2xl));
+}
+
 /* ============================================================
    2.1 CUSTOM SCROLLBAR (Codex Section 2.1)
    ============================================================ */
