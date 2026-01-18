@@ -699,9 +699,7 @@ export default function DesignCodex() {
                                     onClick={() => setIsModalOpen(false)}
                                     style={{
                                         width: '100%',
-                                        justifyContent: 'center',
-                                        borderColor: 'var(--color-primary-action)',
-                                        color: 'var(--color-primary-action)'
+                                        justifyContent: 'center'
                                     }}
                                 >
                                     EXECUTE
